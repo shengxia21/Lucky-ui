@@ -17,7 +17,7 @@
             type="primary"
             icon="Cloudy"
             plain
-            @click="goTarget('https://gitee.com/y_project/Lucky-Vue')"
+            @click="goTarget('https://gitee.com/fushengxuyu/lucky-ui')"
             >访问码云</el-button
           >
         </p>
