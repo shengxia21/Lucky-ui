@@ -136,7 +136,7 @@
           :key="value"
         >
           <el-link :underline="false" icon="DocumentCopy" v-copyText="value" v-copyText:callback="copyTextSuccess" style="float:right">&nbsp;复制</el-link>
-          <pre>{{ value }}</pre>
+          <pre><code class="hljs" v-html="highlightedCode(value, key)"></code></pre>
         </el-tab-pane>
       </el-tabs>
     </el-dialog>
@@ -147,9 +147,22 @@
 
 <script setup name="Gen">
 import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/gen"
-import router from "@/router"
 import importTable from "./importTable"
 import createTable from "./createTable"
+import hljs from "highlight.js/lib/core"
+import "highlight.js/styles/github.css"
+import java from 'highlight.js/lib/languages/java'
+import xml from 'highlight.js/lib/languages/xml'
+import html from 'highlight.js/lib/languages/xml'
+import vue from 'highlight.js/lib/languages/xml'
+import javascript from 'highlight.js/lib/languages/javascript'
+import sql from 'highlight.js/lib/languages/sql'
+hljs.registerLanguage("java", java)
+hljs.registerLanguage("xml", xml)
+hljs.registerLanguage("html", html)
+hljs.registerLanguage("vue", vue)
+hljs.registerLanguage("javascript", javascript)
+hljs.registerLanguage("sql", sql)
 
 const route = useRoute()
 const { proxy } = getCurrentInstance()
@@ -263,6 +276,14 @@ function handlePreview(row) {
     preview.value.open = true
     preview.value.activeName = "domain.java"
   })
+}
+
+/** 高亮显示 */
+function highlightedCode(code, key) {
+  const vmName = key.substring(key.lastIndexOf("/") + 1, key.indexOf(".vm"))
+  var language = vmName.substring(vmName.indexOf(".") + 1, vmName.length)
+  const result = hljs.highlight(code || "", { language: language, ignoreIllegals: true })
+  return result.value || '&nbsp;'
 }
 
 /** 复制代码成功 */
