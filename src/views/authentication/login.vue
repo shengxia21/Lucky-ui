@@ -59,7 +59,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-login-footer">
-      <span>Copyright © 2025 lucky.vip All Rights Reserved.</span>
+      <span>{{ footerContent }}</span>
     </div>
   </div>
 </template>
@@ -69,8 +69,10 @@ import { getCodeImg } from "@/api/authentication/login"
 import Cookies from "js-cookie"
 import { encrypt, decrypt } from "@/utils/jsencrypt"
 import useUserStore from '@/store/modules/user'
+import defaultSettings from '@/config/settings'
 
 const title = import.meta.env.VITE_APP_TITLE
+const footerContent = defaultSettings.footerContent
 const userStore = useUserStore()
 const route = useRoute()
 const router = useRouter()

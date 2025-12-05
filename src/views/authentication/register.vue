@@ -70,7 +70,7 @@
     </el-form>
     <!--  底部  -->
     <div class="el-register-footer">
-      <span>Copyright © 2025 lucky.vip All Rights Reserved.</span>
+      <span>{{ footerContent }}</span>
     </div>
   </div>
 </template>
@@ -78,8 +78,10 @@
 <script setup>
 import { ElMessageBox } from "element-plus"
 import { getCodeImg, register } from "@/api/authentication/login"
+import defaultSettings from '@/config/settings'
 
 const title = import.meta.env.VITE_APP_TITLE
+const footerContent = defaultSettings.footerContent
 const router = useRouter()
 const { proxy } = getCurrentInstance()
 
