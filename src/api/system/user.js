@@ -134,3 +134,11 @@ export function deptTreeSelect() {
     method: 'get'
   })
 }
+
+// 获取用户选择框列表
+export function optionselect() {
+  return request({
+    url: '/system/user/optionselect',
+    method: 'get'
+  })
+}
