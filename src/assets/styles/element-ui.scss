@@ -91,6 +91,10 @@
   display: none;
 }
 
-.el-dropdown .el-dropdown-link{
+.el-dropdown .el-dropdown-link {
   color: var(--el-color-primary) !important;
+}
+
+.el-input-number {
+  width: 100%;
 }

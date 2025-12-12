@@ -44,3 +44,11 @@ export function delKey(id) {
     params: { id: id }
   })
 }
+
+// 获得 API 密钥列表
+export function getApiKeySimpleList() {
+  return request({
+    url: '/ai/api-key/simple-list',
+    method: 'get'
+  })
+}

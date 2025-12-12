@@ -48,7 +48,7 @@
       <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
-    <el-table v-loading="loading" :data="keyList" :stripe="true" :show-overflow-tooltip="true">
+    <el-table v-loading="loading" :data="keyList" :show-overflow-tooltip="true">
       <el-table-column label="平台" align="center" prop="platform">
         <template #default="scope">
           <dict-tag :options="ai_platform" :value="scope.row.platform"/>
