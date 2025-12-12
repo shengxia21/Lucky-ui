@@ -97,6 +97,7 @@
             :inactive-value="false"
             @change="handleUpdatePublicStatusChange(scope.row)"
             :disabled="scope.row.status !== 20"
+            v-hasPermi="['ai:image:update']"
           />
         </template>
       </el-table-column>
