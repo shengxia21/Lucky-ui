@@ -18,7 +18,7 @@
         />
       </el-form-item>
       <el-form-item label="平台" prop="platform">
-        <el-select v-model="queryParams.platform" placeholder="请选择平台" clearable style="width: 240px;">
+        <el-select v-model="queryParams.platform" placeholder="请选择平台" clearable style="width: 200px;">
           <el-option
             v-for="dict in ai_platform"
             :key="dict.value"
