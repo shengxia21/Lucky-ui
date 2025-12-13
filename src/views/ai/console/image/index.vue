@@ -5,7 +5,7 @@
         <el-select
           v-model="queryParams.userId"
           clearable
-          placeholder="请输入用户编号"
+          placeholder="请选择用户"
           style="width: 200px;"
         >
           <el-option
