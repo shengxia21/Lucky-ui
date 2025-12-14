@@ -63,7 +63,7 @@
     <el-table-column label="回复消息编号" align="center" prop="replyId" width="140" />
     <el-table-column label="携带上下文" align="center" prop="useContext" width="100">
       <template #default="scope">
-        <dict-tag :options="boolean_string" :value="scope.row.useContext"/>
+        <dict-tag :options="boolean_string" :value="scope.row.useContext + ''"/>
       </template>
     </el-table-column>
     <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="140" fixed="right">
