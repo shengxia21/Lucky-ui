@@ -96,7 +96,7 @@
             :active-value="true"
             :inactive-value="false"
             @change="handleUpdatePublicStatusChange(scope.row)"
-            :disabled="scope.row.status !== 20"
+            :disabled="scope.row.status !== AiImageStatusEnum.SUCCESS"
             v-hasPermi="['ai:image:update']"
           />
         </template>
@@ -131,6 +131,7 @@
 <script setup name="Image">
 import { listImage, updateImage, delImage } from "@/api/ai/console/image"
 import { optionselect as getUserOptionselect } from "@/api/system/user"
+import { AiImageStatusEnum } from '@/utils/constants/AiConstants'
 
 const { proxy } = getCurrentInstance()
 const { ai_image_status, ai_platform, boolean_string } = proxy.useDict('ai_image_status', 'ai_platform', 'boolean_string')

@@ -129,7 +129,7 @@
           <el-input v-model="form.model" placeholder="请输入模型标识" />
         </el-form-item>
         <el-form-item label="温度参数" prop="temperature"
-          v-if="form.type === 1">
+          v-if="form.type === AiModelTypeEnum.CHAT">
           <el-input-number
             v-model="form.temperature"
             placeholder="请输入温度参数"
@@ -139,7 +139,7 @@
           />
         </el-form-item>
         <el-form-item label="回复数 Token 数" prop="maxTokens"
-          v-if="form.type === 1">
+          v-if="form.type === AiModelTypeEnum.CHAT">
           <el-input-number
             v-model="form.maxTokens"
             placeholder="请输入回复数 Token 数"
@@ -148,13 +148,12 @@
           />
         </el-form-item>
         <el-form-item label="上下文数量" prop="maxContexts"
-          v-if="form.type === 1">
+          v-if="form.type === AiModelTypeEnum.CHAT">
           <el-input-number
             v-model="form.maxContexts"
             placeholder="请输入上下文数量"
             :min="0"
             :max="20"
-            class="!w-1/1"
           />
         </el-form-item>
         <el-form-item label="排序" prop="sort">
@@ -183,6 +182,7 @@
 <script setup name="Model">
 import { listModel, getModel, delModel, addModel, updateModel } from "@/api/ai/console/model"
 import { getApiKeySimpleList } from "@/api/ai/console/apiKey"
+import { AiModelTypeEnum } from '@/utils/constants/AiConstants'
 
 const { proxy } = getCurrentInstance()
 const { ai_model_type, ai_platform, sys_normal_disable } = proxy.useDict('ai_model_type', 'ai_platform', 'sys_normal_disable')

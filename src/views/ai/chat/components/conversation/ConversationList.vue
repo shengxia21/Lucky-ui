@@ -81,7 +81,7 @@
     </div>
 
     <!-- 左底部：工具栏 -->
-    <div class="ai-chat-toolbar">
+    <div class="ai-chat-toolbar" v-if="conversationList.length > 0">
       <div
         class="toolbar-item"
         @click="handleClearConversation"
