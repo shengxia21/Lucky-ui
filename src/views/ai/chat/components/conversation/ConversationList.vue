@@ -122,7 +122,8 @@ const emits = defineEmits([
   'onConversationCreate',
   'onConversationClick',
   'onConversationClear',
-  'onConversationDelete'
+  'onConversationDelete',
+  'onConversationUpdated'
 ])
 
 /** 搜索对话 */
@@ -250,20 +251,10 @@ const updateConversationTitle = (conversation) => {
     updateChatConversationMy({
       id: conversation.id,
       title: value
-    }).then(async response => {
+    }).then(response => {
       proxy.$modal.msgSuccess("重命名成功")
       // 3. 刷新列表
-      await getChatConversationList()
-      // 4. 过滤当前切换的
-      const filterConversationList = conversationList.value.filter((item) => {
-        return item.id === conversation.id
-      })
-      if (filterConversationList.length > 0) {
-        // tip：避免切换对话
-        if (activeConversationId.value === filterConversationList[0].id) {
-          emits('onConversationClick', filterConversationList[0])
-        }
-      }
+      getChatConversationList()
     })
   }).catch(() => {})
 }
@@ -311,6 +302,17 @@ const handleTop = async (conversation) => {
   await getChatConversationList()
 }
 
+/** 刷新对话列表 */
+const refreshConversationList = async (id) => {
+  await getChatConversationMyList().then(response => {
+    conversationList.value = response.data
+  })
+  // 找到更新的对话
+  const conversation = conversationList.value.find(item => item.id === id)
+  // 回调 onConversationUpdated
+  emits('onConversationUpdated', conversation)
+}
+
 /** 监听选中的对话 */
 const { activeId } = toRefs(props)
 watch(activeId, (newValue) => {
@@ -318,7 +320,7 @@ watch(activeId, (newValue) => {
 })
 
 // 暴露给父组件调用的方法
-defineExpose({ createConversation })
+defineExpose({ createConversation, refreshConversationList })
 
 /** 初始化 */
 onMounted(async () => {
