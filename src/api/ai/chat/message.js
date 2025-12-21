@@ -7,7 +7,7 @@ export function getChatMessageListByConversationId(id) {
   return request({
     url: '/ai/chat/message/list-by-conversation-id',
     method: 'get',
-    params: { id: id }
+    params: { conversationId: id }
   })
 }
 

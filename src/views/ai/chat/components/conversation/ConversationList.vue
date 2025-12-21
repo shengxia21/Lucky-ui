@@ -97,7 +97,7 @@
 import { getChatConversationMyList, createChatConversationMy,
   updateChatConversationMy, deleteChatConversationMy,
   deleteChatConversationMyByUnpinned } from '@/api/ai/chat/conversation'
-import roleAvatarDefaultImg from '@/assets/images/ai/chatgpt.png'
+import roleAvatarDefaultImg from '@/assets/images/ai/gpt.svg'
 
 const { proxy } = getCurrentInstance()
 
