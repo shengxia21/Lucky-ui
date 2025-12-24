@@ -167,13 +167,19 @@ function handleScroll() {
 /** 回到底部 */
 const handleGoBottom = () => {
   const scrollContainer = messageContainer.value
-  scrollContainer.scrollTop = scrollContainer.scrollHeight
+  scrollContainer.scrollTo({
+    top: scrollContainer.scrollHeight,
+    behavior: 'smooth'
+  });
 }
 
 /** 回到顶部 */
 const handlerGoTop = () => {
   const scrollContainer = messageContainer.value
-  scrollContainer.scrollTop = 0
+  scrollContainer.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 }
 
 defineExpose({ scrollToBottom, handlerGoTop }) // 提供方法给 parent 调用
