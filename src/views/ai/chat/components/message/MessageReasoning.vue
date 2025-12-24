@@ -112,8 +112,6 @@ const toggleExpanded = () => {
   }
 
   .reasoning-content {
-    max-height: 300px;
-    overflow-y: auto;
     padding: 12px;
     background-color: rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(4px);
