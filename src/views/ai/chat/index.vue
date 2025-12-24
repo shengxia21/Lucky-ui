@@ -129,8 +129,10 @@ const enableContext = ref(true) // 是否开启上下文
 const enableWebSearch = ref(false) // 是否开启联网搜索
 const uploadFiles = ref([]) // 上传的文件 URL 列表
 // 接收 Stream 消息
-const receiveMessageFullText = ref('')  // 接收 Stream 消息的完整文本
-const receiveMessageDisplayedText = ref('') // 接收 Stream 消息的显示文本
+const receiveMessageFullText = ref('')  // 接收正常消息的完整文本
+const receiveMessageDisplayedText = ref('') // 接收正常消息的显示文本
+const receiveMessageFullReasoningText = ref('') // 接收思考消息的完整文本
+const receiveMessageDisplayedReasoningText = ref('') // 接收思考消息的显示文本
 
 // 更新对话 Form 引用
 const conversationUpdateFormRef = ref()
@@ -360,6 +362,8 @@ const requestMessageStream = async (userMessage) => {
   // 设置为空
   receiveMessageFullText.value = ''
   receiveMessageDisplayedText.value = ''
+  receiveMessageFullReasoningText.value = ''
+  receiveMessageDisplayedReasoningText.value = ''
 
   // 1.1 先添加两个假数据，等 stream 返回再替换
   activeMessageList.value.push({
@@ -419,12 +423,11 @@ const requestMessageStream = async (userMessage) => {
 
       // 处理 reasoningContent
       if (data.receive.reasoningContent) {
-        const lastMessage = activeMessageList.value[activeMessageList.value.length - 1]
-        lastMessage.reasoningContent = lastMessage.reasoningContent + data.receive.reasoningContent
+        receiveMessageFullReasoningText.value = receiveMessageFullReasoningText.value + data.receive.reasoningContent
       }
 
       // 处理正常内容
-      if (data.receive.content !== '') {
+      if (data.receive.content) {
         receiveMessageFullText.value = receiveMessageFullText.value + data.receive.content
       }
     },
@@ -448,26 +451,43 @@ const startAnimation = () => {
   const animateResponseText = () => {
     // 如果请求已被中止，结束动画
     if (conversationInAbortController.value?.signal.aborted) {
-      // 显示所有剩余文本
+      // 显示所有正常消息剩余文本
       receiveMessageDisplayedText.value = receiveMessageFullText.value
+      // 显示所有思考消息剩余文本
+      receiveMessageDisplayedReasoningText.value = receiveMessageFullReasoningText.value
       updateLastMessageContent()
       return
     }
 
-    // 计算剩余文本
+    // 思考内容是否渲染完成
+    let isReasoningComplete = receiveMessageFullReasoningText.value.length > 0 ? false : true
+
+    // 计算思考消息剩余文本
+    const remainingReasoningText = receiveMessageFullReasoningText.value.slice(receiveMessageDisplayedReasoningText.value.length)
+    if (remainingReasoningText.length > 0) {
+      // 动态计算每次显示的字符数，根据剩余文本长度调整
+      const chunkSize = Math.max(1, Math.ceil(remainingReasoningText.length / 60))
+      const chunk = remainingReasoningText.slice(0, chunkSize)
+      receiveMessageDisplayedReasoningText.value += chunk
+    } else {
+      isReasoningComplete = true
+    }
+
+    // 计算正常消息剩余文本
     const remainingText = receiveMessageFullText.value.slice(receiveMessageDisplayedText.value.length)
-    // 如果有剩余文本，进行文本动画更新
-    if (remainingText.length > 0) {
+    // 如果正常消息有剩余文本，进行文本动画更新
+    if (isReasoningComplete && remainingText.length > 0) {
       // 动态计算每次显示的字符数，根据剩余文本长度调整
       const chunkSize = Math.max(1, Math.ceil(remainingText.length / 60))
       const chunk = remainingText.slice(0, chunkSize)
       receiveMessageDisplayedText.value += chunk
-      // 更新 message
-      updateLastMessageContent()
     }
 
+    // 更新 message
+    updateLastMessageContent()
+
     // 如果对话还在进行中或者还有文本未显示，继续动画
-    if (conversationInProgress.value || remainingText.length > 0) {
+    if (conversationInProgress.value || remainingReasoningText.length > 0 || remainingText.length > 0) {
       requestAnimationFrame(animateResponseText)
     }
   }
@@ -477,6 +497,7 @@ const startAnimation = () => {
     const lastMessage = activeMessageList.value[activeMessageList.value.length - 1]
     if (lastMessage) {
       lastMessage.content = receiveMessageDisplayedText.value
+      lastMessage.reasoningContent = receiveMessageDisplayedReasoningText.value
       // 滚动到最下面
       scrollToBottom()
     }
