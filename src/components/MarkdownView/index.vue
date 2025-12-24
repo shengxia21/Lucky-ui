@@ -7,6 +7,8 @@ import { useClipboard } from '@vueuse/core'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import "highlight.js/styles/github.css"
+import vue from 'highlight.js/lib/languages/xml'
+hljs.registerLanguage("vue", vue)
 
 const { proxy } = getCurrentInstance()
 
