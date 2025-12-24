@@ -469,6 +469,8 @@ const startAnimation = () => {
       const chunkSize = Math.max(1, Math.ceil(remainingReasoningText.length / 60))
       const chunk = remainingReasoningText.slice(0, chunkSize)
       receiveMessageDisplayedReasoningText.value += chunk
+      // 更新 message
+      updateLastMessageContent()
     } else {
       isReasoningComplete = true
     }
@@ -481,10 +483,9 @@ const startAnimation = () => {
       const chunkSize = Math.max(1, Math.ceil(remainingText.length / 60))
       const chunk = remainingText.slice(0, chunkSize)
       receiveMessageDisplayedText.value += chunk
+      // 更新 message
+      updateLastMessageContent()
     }
-
-    // 更新 message
-    updateLastMessageContent()
 
     // 如果对话还在进行中或者还有文本未显示，继续动画
     if (conversationInProgress.value || remainingReasoningText.length > 0 || remainingText.length > 0) {
