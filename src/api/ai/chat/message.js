@@ -33,13 +33,13 @@ export function deleteChatMessageByConversationId(id) {
 export function sendChatMessageStream(
   conversationId,
   content,
-  ctrl,
   enableContext,
   enableWebSearch,
+  attachmentUrls,
+  ctrl,
   onMessage,
   onError,
-  onClose,
-  attachmentUrls
+  onClose
 ) {
   return fetchEventSource(import.meta.env.VITE_APP_BASE_API + '/ai/chat/message/send-stream', {
     method: 'post',
@@ -55,9 +55,9 @@ export function sendChatMessageStream(
       useSearch: enableWebSearch,
       attachmentUrls: attachmentUrls || []
     }),
+    signal: ctrl.signal,
     onmessage: onMessage,
     onerror: onError,
-    onclose: onClose,
-    signal: ctrl.signal
+    onclose: onClose
   })
 }
