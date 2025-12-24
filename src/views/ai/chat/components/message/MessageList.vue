@@ -19,7 +19,6 @@
               :content="item.content || ''"
             />
             <MarkdownView
-              class="message-markdown"
               :content="item.content"
             />
           </div>
@@ -262,11 +261,6 @@ onMounted(() => {
         padding-left: 10px;
         padding-right: 10px;
         padding-bottom: 5px;
-      }
-      
-      .message-markdown {
-        color: var(--el-text-color-primary);
-        font-size: 0.95rem;
       }
       
       .message-actions-left {

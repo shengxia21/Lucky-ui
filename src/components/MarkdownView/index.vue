@@ -39,14 +39,13 @@ if (typeof window !== "undefined") {
 const clipboard = "nextElementSibling && (window.copyToClipboard(nextElementSibling.innerText))";
 
 const md = new MarkdownIt({
-  highlight: function (str, lang) {
-    if (lang && hljs.getLanguage(lang)) {
-      try {
-        const copyHtml = `<div onclick="${clipboard}" style="position: absolute; right: 10px; top: 5px; color: #444;cursor: pointer;">复制</div>`
-        return `<pre style="position: relative;">${copyHtml}<code class="hljs">${hljs.highlight(str || "", { language: lang, ignoreIllegals: true }).value}</code></pre>`
-      } catch (__) {}
+  highlight: (str, lang) => {
+    const langHtml = lang ? `<div style="position: absolute; left: 10px; top: 5px; color: #6b7280;">${lang}</div>` : ""
+    const copyHtml = `<div onclick="${clipboard}" style="position: absolute; right: 10px; top: 5px; color: #444;cursor: pointer;">复制</div>`
+    if (str && hljs.getLanguage(lang)) {
+      return `<pre style="position: relative;">${langHtml}${copyHtml}<code class="hljs" style="border-radius: 8px;padding-top: 45px;">${hljs.highlight(str || "", { language: lang, ignoreIllegals: true }).value}</code></pre>`
     }
-    return ``
+    return `<pre style="position: relative;">${langHtml}${copyHtml}<code class="hljs" style="border-radius: 8px;padding-top: 45px;">${str}</code></pre>`
   }
 })
 
@@ -64,86 +63,5 @@ const renderedMarkdown = computed(() => {
   letter-spacing: 0em;
   color: #3b3e55;
   max-width: 100%;
-
-  pre {
-    position: relative;
-  }
-
-  pre code.hljs {
-    width: auto;
-  }
-
-  code.hljs {
-    border-radius: 6px;
-    padding-top: 20px;
-    width: auto;
-    @media screen and (min-width: 1536px) {
-      width: 960px;
-    }
-
-    @media screen and (max-width: 1536px) and (min-width: 1024px) {
-      width: calc(100vw - 400px - 64px - 32px * 2);
-    }
-
-    @media screen and (max-width: 1024px) and (min-width: 768px) {
-      width: calc(100vw - 32px * 2);
-    }
-
-    @media screen and (max-width: 768px) {
-      width: calc(100vw - 16px * 2);
-    }
-  }
-
-  p,
-  code.hljs {
-    margin-bottom: 16px;
-  }
-
-  p {
-    margin: 0;
-    margin-bottom: 3px;
-  }
-
-  /* 标题通用格式 */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: var(--color-G900);
-    margin: 24px 0 8px;
-    font-weight: 600;
-  }
-
-  h1 {
-    font-size: 22px;
-    line-height: 32px;
-  }
-
-  h2 {
-    font-size: 20px;
-    line-height: 30px;
-  }
-
-  h3 {
-    font-size: 18px;
-    line-height: 28px;
-  }
-
-  h4 {
-    font-size: 16px;
-    line-height: 26px;
-  }
-
-  h5 {
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  h6 {
-    font-size: 16px;
-    line-height: 24px;
-  }
 }
 </style>
