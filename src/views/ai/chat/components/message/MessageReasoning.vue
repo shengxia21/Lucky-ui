@@ -121,24 +121,6 @@ const toggleExpanded = () => {
     border-top: 0;
     border-radius: 0 0 8px 8px;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-
-    // 自定义滚动条样式
-    &::-webkit-scrollbar {
-      width: 4px;
-    }
-
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: rgba(156, 163, 175, 0.4);
-      border-radius: 2px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: rgba(156, 163, 175, 0.6);
-    }
   }
 
   .reasoning-markdown {
