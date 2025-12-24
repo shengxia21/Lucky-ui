@@ -1,5 +1,5 @@
 <template>
-  <div ref="contentRef" class="markdown-view" v-html="renderedMarkdown"></div>
+  <div class="markdown-view" v-html="renderedMarkdown"></div>
 </template>
 
 <script setup name="MarkdownView">
@@ -8,9 +8,12 @@ import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'
 import "highlight.js/styles/github.css"
 import vue from 'highlight.js/lib/languages/xml'
+import html from "highlight.js/lib/languages/xml"
 hljs.registerLanguage("vue", vue)
+hljs.registerLanguage("html", html)
 
 const { proxy } = getCurrentInstance()
+const { copy, isSupported } = useClipboard();
 
 // 定义组件属性
 const props = defineProps({
@@ -20,15 +23,26 @@ const props = defineProps({
   }
 })
 
+function copyToClipboard(str) {
+  if (isSupported) {
+    copy(str);
+    proxy.$modal.msgSuccess("复制成功");
+  } else {
+    proxy.$modal.msgError("您的浏览器不支持剪贴板API");
+  }
+}
 
-const { copy } = useClipboard() // 初始化 copy 到粘贴板
-const contentRef = ref()
+if (typeof window !== "undefined") {
+  window.copyToClipboard = copyToClipboard;
+}
+
+const clipboard = "nextElementSibling && (window.copyToClipboard(nextElementSibling.innerText))";
 
 const md = new MarkdownIt({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
       try {
-        const copyHtml = `<div id="copy" data-copy='${str}' style="position: absolute; right: 10px; top: 5px; color: #444;cursor: pointer;">复制</div>`
+        const copyHtml = `<div onclick="${clipboard}" style="position: absolute; right: 10px; top: 5px; color: #444;cursor: pointer;">复制</div>`
         return `<pre style="position: relative;">${copyHtml}<code class="hljs">${hljs.highlight(str || "", { language: lang, ignoreIllegals: true }).value}</code></pre>`
       } catch (__) {}
     }
@@ -39,17 +53,6 @@ const md = new MarkdownIt({
 /** 渲染 markdown */
 const renderedMarkdown = computed(() => {
   return md.render(props.content)
-})
-
-/** 初始化 **/
-onMounted(async () => {
-  // 添加 copy 监听
-  contentRef.value.addEventListener('click', (e) => {
-    if (e.target.id === 'copy') {
-      copy(e.target?.dataset?.copy)
-      proxy.$modal.msgSuccess('复制成功!')
-    }
-  })
 })
 </script>
 
