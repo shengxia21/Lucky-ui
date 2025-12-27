@@ -2,12 +2,10 @@ import { defineConfig, loadEnv } from 'vite'
 import path from 'path'
 import createVitePlugins from './vite/plugins'
 
-const baseUrl = 'http://localhost:8082' // 后端接口
-
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd())
-  const { VITE_APP_ENV } = env
+  const { VITE_APP_ENV, VITE_APP_BASE_API, VITE_APP_PROXY_TARGET } = env
   return {
     // 部署生产环境和开发环境下的URL。
     // 默认情况下，vite 会假设你的应用是被部署在一个域名的根路径上
@@ -47,14 +45,14 @@ export default defineConfig(({ mode, command }) => {
       open: true,
       proxy: {
         // https://cn.vitejs.dev/config/#server-proxy
-        '/dev-api': {
-          target: baseUrl,
+        [VITE_APP_BASE_API]: {
+          target: VITE_APP_PROXY_TARGET,
           changeOrigin: true,
-          rewrite: (p) => p.replace(/^\/dev-api/, '')
+          rewrite: (p) => p.replace(new RegExp('^' + VITE_APP_BASE_API), '')
         },
         // springdoc proxy
         '^/v3/api-docs/(.*)': {
-          target: baseUrl,
+          target: VITE_APP_PROXY_TARGET,
           changeOrigin: true,
         }
       }
