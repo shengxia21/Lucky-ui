@@ -1,7 +1,3 @@
-/**
- * 通用css样式布局处理
- * Copyright (c) 2025 lucky
- */
 
 /** 基础通用 **/
 .pt5 {
@@ -58,6 +54,14 @@
   font-weight: 500;
   line-height: 1.1;
   color: inherit;
+}
+
+.el-form--inline {
+  .el-form-item {
+    .el-input, .el-cascader, .el-select, .el-autocomplete {
+      width: 200px;
+    }
+  }
 }
 
 .el-form .el-form-item__label {
