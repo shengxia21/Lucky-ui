@@ -1,6 +1,5 @@
 /**
 * v-copyText 复制文本内容
-* Copyright (c) 2022 lucky
 */
 export default {
   beforeMount(el, { value, arg }) {

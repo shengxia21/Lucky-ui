@@ -1,6 +1,5 @@
  /**
  * v-hasRole 角色权限处理
- * Copyright (c) 2025 lucky
  */
 import useUserStore from '@/store/modules/user'
 
