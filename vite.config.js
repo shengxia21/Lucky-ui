@@ -5,7 +5,7 @@ import createVitePlugins from './vite/plugins'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd())
-  const { VITE_APP_ENV, VITE_APP_BASE_API, VITE_APP_PROXY_TARGET } = env
+  const { VITE_APP_ENV, VITE_APP_BASE_API, VITE_APP_PROXY_TARGET, VITE_APP_PORT } = env
   return {
     // 部署生产环境和开发环境下的URL。
     // 默认情况下，vite 会假设你的应用是被部署在一个域名的根路径上
@@ -40,7 +40,7 @@ export default defineConfig(({ mode, command }) => {
     },
     // vite 相关配置
     server: {
-      port: 82,
+      port: VITE_APP_PORT,
       host: true,
       open: true,
       proxy: {
