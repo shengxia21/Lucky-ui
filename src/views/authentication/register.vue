@@ -77,7 +77,8 @@
 
 <script setup>
 import { ElMessageBox } from "element-plus"
-import { getCodeImg, register } from "@/api/authentication/login"
+import { getCodeImg } from "@/api/authentication/login"
+import { register } from "@/api/authentication/register"
 import defaultSettings from '@/config/settings'
 
 const title = import.meta.env.VITE_APP_TITLE

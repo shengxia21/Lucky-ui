@@ -66,6 +66,7 @@
 
 <script setup>
 import { getCodeImg } from "@/api/authentication/login"
+import { getRegisterEnabled } from "@/api/authentication/register"
 import Cookies from "js-cookie"
 import { encrypt, decrypt } from "@/utils/jsencrypt"
 import useUserStore from '@/store/modules/user'
@@ -150,6 +151,12 @@ function getCode() {
   })
 }
 
+function getRegisterStatus() {
+  getRegisterEnabled().then(res => {
+    register.value = res.registerEnabled === undefined ? false : res.registerEnabled
+  })
+}
+
 function getCookie() {
   const username = Cookies.get("username")
   const password = Cookies.get("password")
@@ -162,6 +169,7 @@ function getCookie() {
 }
 
 getCode()
+getRegisterStatus()
 getCookie()
 </script>
 
