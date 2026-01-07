@@ -52,6 +52,6 @@ export default {
   /**
    * 底部版权文本内容
    */
-  footerContent: 'Copyright © 2025 Lucky. All Rights Reserved.'
+  footerContent: 'Copyright © 2025-2026 Lucky. All Rights Reserved.'
 }
 
