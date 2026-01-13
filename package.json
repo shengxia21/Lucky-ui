@@ -52,5 +52,8 @@
   "overrides": {
     "quill": "2.0.2"
   },
+  "resolutions": {
+    "quill": "2.0.2"
+  },
   "packageManager": "pnpm@10.13.1"
 }
