@@ -105,8 +105,8 @@
             <el-radio
               v-for="dict in sys_normal_disable"
               :key="dict.value"
-              :label="parseInt(dict.value)"
-            >{{dict.label}}</el-radio>
+              :value="parseInt(dict.value)"
+            >{{ dict.label }}</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
