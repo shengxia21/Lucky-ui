@@ -36,7 +36,7 @@
     <el-dialog
       v-model="dialogVisible"
       title="预览"
-      width="800px"
+      width="600px"
       append-to-body
     >
       <img
