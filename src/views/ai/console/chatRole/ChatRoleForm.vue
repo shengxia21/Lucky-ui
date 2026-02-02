@@ -24,10 +24,10 @@
         <el-input v-model="form.category" placeholder="请输入角色类别" />
       </el-form-item>
       <el-form-item label="角色描述" prop="description">
-        <el-input v-model="form.description" type="textarea" placeholder="请输入角色描述" />
+        <el-input v-model="form.description" type="textarea" placeholder="请输入角色描述" :rows="4" />
       </el-form-item>
       <el-form-item label="角色设定" prop="systemMessage">
-        <el-input v-model="form.systemMessage" type="textarea" placeholder="请输入角色设定" />
+        <el-input v-model="form.systemMessage" type="textarea" placeholder="请输入角色设定" :rows="4" />
       </el-form-item>
       <el-form-item label="引用知识库" prop="knowledgeIds">
         <el-select v-model="form.knowledgeIds" placeholder="请选择知识库" clearable multiple>
@@ -186,37 +186,23 @@ function reset() {
 
 /** 提交按钮 */
 function submitForm() {
-  proxy.$refs["roleRef"].validate(valid => {
+  proxy.$refs["roleRef"].validate(async (valid) => {
     if (valid) {
-      if (form.value.id != null) {
-        if (formType.value === 'my-update') {
-          updateMyRole(form.value).then(response => {
-            proxy.$modal.msgSuccess("修改成功")
-            open.value = false
-            emit('success')
-          })
-        } else {
-          updateRole(form.value).then(response => {
-            proxy.$modal.msgSuccess("修改成功")
-            open.value = false
-            emit('success')
-          })
-        }
-      } else {
-        if (formType.value === 'my-create') {
-          addMyRole(form.value).then(response => {
-            proxy.$modal.msgSuccess("新增成功")
-            open.value = false
-            emit('success')
-          })
-        } else {
-          addRole(form.value).then(response => {
-            proxy.$modal.msgSuccess("新增成功")
-            open.value = false
-            emit('success')
-          })
-        }
+      if (formType.value === 'my-update') {
+        await updateMyRole(form.value)
+        proxy.$modal.msgSuccess("修改成功")
+      } else if (formType.value === 'update') {
+        await updateRole(form.value)
+        proxy.$modal.msgSuccess("修改成功")
+      } else if (formType.value === 'my-create') {
+        await addMyRole(form.value)
+        proxy.$modal.msgSuccess("新增成功")
+      } else if (formType.value === 'create') {
+        await addRole(form.value)
+        proxy.$modal.msgSuccess("新增成功")
       }
+      open.value = false
+      emit('success')
     }
   })
 }
