@@ -267,5 +267,23 @@ html.dark {
     color: var(--el-text-color-regular) !important;
     border-top: 1px solid var(--el-bg-color) !important;
   }
+
+  /* AI对话样式覆盖 */
+  .markdown-view {
+    color: var(--el-text-color-primary) !important;
+  }
+  .ai-chat-aside {
+    background-color: var(--blockquote-bg) !important;
+
+    .conversation-item-active .conversation-title {
+      color: var(--el-bg-color-overlay) !important;
+    }
+  }
+  .reasoning-content {
+    background-color: var(--blockquote-border) !important;
+  }
+  .chat-textarea::placeholder {
+    color: var(--el-text-color-regular) !important;
+  }
 }
 
