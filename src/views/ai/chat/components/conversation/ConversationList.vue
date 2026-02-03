@@ -1,8 +1,6 @@
 <!-- AI 对话 -->
 <template>
-  <el-aside
-    class="ai-chat-aside"
-  >
+  <el-aside class="ai-chat-aside">
     <!-- 左顶部：对话 -->
     <div class="ai-chat-aside-content">
       <el-button class="new-conversation-btn" type="primary" @click="createConversation">
@@ -45,10 +43,7 @@
               :class="{ 'conversation-item-active': conversation.id == activeConversationId }"
             >
               <div class="conversation-info">
-                <img
-                  class="conversation-avatar"
-                  :src="conversation.roleAvatar || roleAvatarDefaultImg"
-                />
+                <img class="conversation-avatar" :src="conversation.roleAvatar" />
                 <span class="conversation-title">
                   {{ conversation.title }}
                 </span>
@@ -84,12 +79,24 @@
     <div class="ai-chat-toolbar" v-if="conversationList.length > 0">
       <div
         class="toolbar-item"
+        @click="handleRoleRepository"
+      >
+        <el-icon><User /></el-icon>
+        <el-text class="toolbar-text" size="small">角色仓库</el-text>
+      </div>
+      <div
+        class="toolbar-item"
         @click="handleClearConversation"
       >
         <el-icon><Delete /></el-icon>
         <el-text class="toolbar-text" size="small">清空未置顶对话</el-text>
       </div>
     </div>
+
+    <!-- 角色仓库抽屉 -->
+    <el-drawer v-model="roleRepositoryOpen" title="角色仓库" size="754px">
+      <RoleRepository @onUseRole="handleRoleUse"  />
+    </el-drawer>
   </el-aside>
 </template>
 
@@ -98,6 +105,7 @@ import { getChatConversationMyList, createChatConversationMy,
   updateChatConversationMy, deleteChatConversationMy,
   deleteChatConversationMyByUnpinned } from '@/api/ai/chat/conversation'
 import roleAvatarDefaultImg from '@/assets/images/ai/gpt.svg'
+import RoleRepository from '../role/RoleRepository.vue'
 
 const { proxy } = getCurrentInstance()
 
@@ -108,6 +116,7 @@ const hoverConversationId = ref(null) // 悬浮上去的对话
 const conversationList = ref([]) // 对话列表
 const conversationMap = ref({}) // 对话分组 (置顶、今天、三天前、一星期前、一个月前)
 const loading = ref(false) // 加载中
+const roleRepositoryOpen = ref(false) // 角色仓库是否打开
 
 // 定义组件 props
 const props = defineProps({
@@ -158,7 +167,12 @@ const getChatConversationList = async () => {
 
     // 1.1 获取对话数据
     await getChatConversationMyList().then(response => {
-      conversationList.value = response.data
+      conversationList.value = response.data.map(item => {
+        return {
+          ...item,
+          roleAvatar: item.roleAvatar ? import.meta.env.VITE_APP_BASE_API + item.roleAvatar : roleAvatarDefaultImg
+        }
+      })
     })
     // 1.2 排序
     conversationList.value.sort((a, b) => {
@@ -239,7 +253,7 @@ const createConversation = async () => {
 
 /** 修改对话的标题 */
 const updateConversationTitle = (conversation) => {
-  // 1. 二次确认
+  // 二次确认
   proxy.$prompt("修改标题", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
@@ -247,49 +261,57 @@ const updateConversationTitle = (conversation) => {
     inputErrorMessage: "标题不能为空",
     inputValue: conversation.title
   }).then(({ value }) => {
-    // 2. 发起修改
-    updateChatConversationMy({
-      id: conversation.id,
-      title: value
-    }).then(response => {
-      proxy.$modal.msgSuccess("重命名成功")
-      // 3. 刷新列表
-      getChatConversationList()
-    })
+    return updateChatConversationMy({ id: conversation.id, title: value })
+  }).then(response => {
+    proxy.$modal.msgSuccess("重命名成功")
+    // 3. 刷新列表
+    getChatConversationList()
   }).catch(() => {})
 }
 
 /** 删除聊天对话 */
 const deleteChatConversation = (conversation) => {
   // 删除的二次确认
-  proxy.$modal.confirm(`是否确认删除对话 - ${conversation.title}?`)
-  .then(() => {
-    // 发起删除
-    deleteChatConversationMy(conversation.id)
-    .then(() => {
-      proxy.$modal.msgSuccess('对话已删除')
-      // 刷新列表
-      getChatConversationList()
-      // 回调
-      emits('onConversationDelete', conversation)
-    })
+  proxy.$modal.confirm(`是否确认删除对话 - ${conversation.title}?`).then(() => {
+    return deleteChatConversationMy(conversation.id)
+  }).then(() => {
+    proxy.$modal.msgSuccess('对话已删除')
+    // 刷新列表
+    getChatConversationList()
+    // 回调
+    emits('onConversationDelete', conversation)
   }).catch(() => {})
+}
+
+/** 角色仓库 */
+const handleRoleRepository = () => {
+  roleRepositoryOpen.value = !roleRepositoryOpen.value
+}
+
+/** 使用角色 */
+const handleRoleUse = async (role) => {
+  // 1. 关闭角色仓库
+  roleRepositoryOpen.value = false
+  // 2. 创建角色对话
+  await createChatConversationMy({ roleId: role.id })
+  // 3. 刷新列表
+  await getChatConversationList()
+  // 4. 选中对话
+  emits('onConversationClick', conversationList.value[0])
 }
 
 /** 清空对话 */
 const handleClearConversation = () => {
-  proxy.$modal.confirm('确认后对话会全部清空，置顶的对话除外。')
-  .then(() => {
-    deleteChatConversationMyByUnpinned()
-    .then(() => {
-      proxy.$modal.msgSuccess('操作成功!')
-      // 清空对话和对话内容
-      activeConversationId.value = null
-      // 获取对话列表
-      getChatConversationList()
-      // 回调方法
-      emits('onConversationClear')
-    })
+  proxy.$modal.confirm('确认后对话会全部清空，置顶的对话除外。').then(() => {
+    return deleteChatConversationMyByUnpinned()
+  }).then(() => {
+    proxy.$modal.msgSuccess('操作成功!')
+    // 清空对话和对话内容
+    activeConversationId.value = null
+    // 获取对话列表
+    getChatConversationList()
+    // 回调方法
+    emits('onConversationClear')
   }).catch(() => {})
 }
 
@@ -297,7 +319,9 @@ const handleClearConversation = () => {
 const handleTop = async (conversation) => {
   // 更新对话置顶
   conversation.pinned = !conversation.pinned
-  await updateChatConversationMy(conversation)
+  await updateChatConversationMy(conversation).then(response => {
+    proxy.$modal.msgSuccess('操作成功!')
+  })
   // 刷新对话
   await getChatConversationList()
 }
