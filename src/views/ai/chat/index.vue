@@ -101,7 +101,7 @@
   </el-container>
 </template>
 
-<script setup name="Chat">
+<script setup name="AiChat">
 import { deleteChatMessageByConversationId, getChatMessageListByConversationId, sendChatMessageStream } from '@/api/ai/chat/message'
 import ConversationList from './components/conversation/ConversationList.vue'
 import ConversationUpdateForm from './components/conversation/ConversationUpdateForm.vue'
@@ -214,13 +214,12 @@ const handlerMessageClear = () => {
     return
   }
   // 确认提示
-  proxy.$modal.confirm('确认清空对话消息？')
-  .then(() => {
+  proxy.$modal.confirm('确认清空对话消息？').then(() => {
     // 清空对话
-    deleteChatMessageByConversationId(activeConversationId.value).then(() => {
-      // 刷新 message 列表
-      activeMessageList.value = []
-    })
+    return deleteChatMessageByConversationId(activeConversationId.value)
+  }).then(() => {
+    // 刷新 message 列表
+    activeMessageList.value = []
   }).catch(() => {})
 }
 
@@ -267,8 +266,7 @@ const getMessageList = async () => {
     // 加载中
     activeMessageListLoading.value = true
     // 获取消息列表
-    await getChatMessageListByConversationId(activeConversationId.value)
-    .then(response => {
+    await getChatMessageListByConversationId(activeConversationId.value).then(response => {
       activeMessageList.value = response.data
     })
   } finally {
