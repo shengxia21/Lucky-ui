@@ -25,7 +25,7 @@ export function deleteChatMessageByConversationId(id) {
   return request({
     url: '/ai/chat/message/delete-by-conversation-id',
     method: 'delete',
-    params: { id: id }
+    params: { conversationId: id }
   })
 }
 
