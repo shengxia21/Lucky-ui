@@ -61,7 +61,7 @@
 <script setup name="ChatConversationUpdateForm">
 import { getModelSimpleList } from '@/api/ai/console/model'
 import { updateChatConversationMy } from '@/api/ai/chat/conversation'
-import { AiModelTypeEnum } from '@/utils/constants/AiConstants'
+import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
 

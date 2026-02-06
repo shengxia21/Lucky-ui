@@ -88,7 +88,7 @@
 <script setup name="ChatRoleForm">
 import { getRole, addRole, updateRole, addMyRole, updateMyRole } from "@/api/ai/console/chatRole"
 import { getModelSimpleList } from "@/api/ai/console/model"
-import { AiModelTypeEnum } from '@/utils/constants/AiConstants'
+import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 
 defineExpose({ openDialog }) // 提供 open 方法，用于打开弹窗
 

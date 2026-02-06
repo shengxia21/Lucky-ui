@@ -182,7 +182,7 @@
 <script setup name="Model">
 import { listModel, getModel, delModel, addModel, updateModel } from "@/api/ai/console/model"
 import { getApiKeySimpleList } from "@/api/ai/console/apiKey"
-import { AiModelTypeEnum } from '@/utils/constants/AiConstants'
+import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
 const { ai_model_type, ai_platform, sys_normal_disable } = proxy.useDict('ai_model_type', 'ai_platform', 'sys_normal_disable')

@@ -131,7 +131,7 @@
 <script setup name="Image">
 import { listImage, updateImage, delImage } from "@/api/ai/console/image"
 import { optionselect as getUserOptionselect } from "@/api/system/user"
-import { AiImageStatusEnum } from '@/utils/constants/AiConstants'
+import { AiImageStatusEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
 const { ai_image_status, ai_platform, boolean_string } = proxy.useDict('ai_image_status', 'ai_platform', 'boolean_string')
