@@ -285,5 +285,8 @@ html.dark {
   .chat-textarea::placeholder {
     color: var(--el-text-color-regular) !important;
   }
+  .pagination-div {
+    background-color: var(--el-bg-color) !important;
+  }
 }
 

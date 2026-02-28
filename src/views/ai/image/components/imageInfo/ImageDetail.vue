@@ -1,0 +1,92 @@
+<template>
+  <el-drawer
+    v-model="showDrawer"
+    title="图片详细"
+    @close="handleDrawerClose"
+  >
+    <!-- 图片预览 -->
+    <div class="image-div">
+      <image-preview
+        :src="detail.picUrl"
+        width="100%"
+        height="100%"
+      />
+    </div>
+
+    <!-- 基础信息 -->
+    <el-descriptions title="基础信息" :column="1" :label-width="100" border>
+      <el-descriptions-item label="提交时间">
+        {{ parseTime(detail.createTime) }}
+      </el-descriptions-item>
+      <el-descriptions-item label="生成时间">
+        {{ parseTime(detail.finishTime) }}
+      </el-descriptions-item>
+      <el-descriptions-item label="模型">
+        {{ detail.model }}({{ detail.height }}x{{ detail.width }})
+      </el-descriptions-item>
+      <el-descriptions-item label="提示词">
+        <div class="prompt-text">{{ detail.prompt }}</div>
+      </el-descriptions-item>
+      <el-descriptions-item label="图片地址">
+        <div class="url-text">{{ detail.picUrl }}</div>
+      </el-descriptions-item>
+    </el-descriptions>
+  </el-drawer>
+</template>
+
+<script setup name="ImageDetail">
+import { getImageMy } from '@/api/ai/image'
+
+const showDrawer = ref(false)
+const detail = ref({})
+
+const props = defineProps({
+  show: {
+    type: Boolean,
+    required: true,
+    default: false
+  },
+  imageId: {
+    type: [Number, String]
+  }
+})
+
+const emits = defineEmits(['close'])
+
+const { show, imageId } = toRefs(props)
+
+watch(show, (newVal, _oldVal) => {
+  showDrawer.value = newVal
+})
+
+watch(imageId, async (newVal, _oldVal) => {
+  if (newVal) {
+    await getImageDetail(newVal)
+  }
+})
+
+const getImageDetail = async (imageId) => {
+  const { data } = await getImageMy(imageId)
+  detail.value = data
+}
+
+const handleDrawerClose = () => {
+  emits('close')
+}
+</script>
+
+<style lang="scss" scoped>
+.image-div {
+  margin-bottom: 1.25rem;
+  height: 25rem;
+}
+
+.prompt-text {
+  word-break: break-word;
+}
+
+.url-text {
+  word-break: break-all;
+  font-size: 0.75rem;
+}
+</style>
