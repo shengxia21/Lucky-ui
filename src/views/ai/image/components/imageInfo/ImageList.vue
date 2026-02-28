@@ -172,7 +172,7 @@ onUnmounted(() => {
 
   .pagination-div {
     position: absolute;
-    bottom: 50px;
+    bottom: 0;
     left: 0;
     padding-bottom: 23px;
     height: 50px;
