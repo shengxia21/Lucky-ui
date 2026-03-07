@@ -98,7 +98,7 @@
     />
 
     <!-- 角色表单对话框 -->
-    <ChatRoleForm ref="formRef" @success="handleAddRoleSuccess" />
+    <ChatRoleForm ref="formRef" @success="getList" />
   </div>
 </template>
 
@@ -177,11 +177,6 @@ const handleCategoryClick = (category) => {
 /** 添加角色 */
 const handleAddRole = () => {
   formRef.value.openDialog('my-create', null)
-}
-
-/** 添加角色成功回调 */
-const handleAddRoleSuccess = () => {
-  getList()
 }
 
 /** 操作：编辑、删除 */

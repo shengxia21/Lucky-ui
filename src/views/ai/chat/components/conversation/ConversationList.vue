@@ -262,7 +262,7 @@ const updateConversationTitle = (conversation) => {
     inputValue: conversation.title
   }).then(({ value }) => {
     return updateChatConversationMy({ id: conversation.id, title: value })
-  }).then(response => {
+  }).then(() => {
     proxy.$modal.msgSuccess("重命名成功")
     // 3. 刷新列表
     getChatConversationList()
@@ -319,7 +319,7 @@ const handleClearConversation = () => {
 const handleTop = async (conversation) => {
   // 更新对话置顶
   conversation.pinned = !conversation.pinned
-  await updateChatConversationMy(conversation).then(response => {
+  await updateChatConversationMy(conversation).then(() => {
     proxy.$modal.msgSuccess('操作成功!')
   })
   // 刷新对话
