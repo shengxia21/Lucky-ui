@@ -3,10 +3,16 @@
     <el-form
       ref="formRef"
       :model="formData"
-      :rules="formRules"
+      :rules="rules"
       label-width="130px"
-      v-loading="formLoading"
+      v-loading="loading"
     >
+      <el-form-item label="对话标题" prop="title">
+        <el-input
+          v-model="formData.title"
+          placeholder="请输入对话标题"
+        />
+      </el-form-item>
       <el-form-item label="角色设定" prop="systemMessage">
         <el-input
           type="textarea"
@@ -52,7 +58,7 @@
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="submitForm" type="primary" :disabled="formLoading">确 定</el-button>
+      <el-button @click="submitForm" type="primary" :disabled="loading">确 定</el-button>
       <el-button @click="dialogVisible = false">取 消</el-button>
     </template>
   </el-dialog>
@@ -66,16 +72,18 @@ import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 const { proxy } = getCurrentInstance()
 
 const dialogVisible = ref(false) // 弹窗的是否展示
-const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
+const loading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
 const formData = ref({
   id: undefined,
+  title: undefined,
   systemMessage: undefined,
   modelId: undefined,
   temperature: undefined,
   maxTokens: undefined,
   maxContexts: undefined
 })
-const formRules = reactive({
+const rules = reactive({
+  title: [{ required: true, message: '对话标题不能为空', trigger: 'blur' }],
   modelId: [{ required: true, message: '模型不能为空', trigger: 'blur' }],
   status: [{ required: true, message: '状态不能为空', trigger: 'blur' }],
   temperature: [{ required: true, message: '温度参数不能为空', trigger: 'blur' }],
@@ -85,6 +93,9 @@ const formRules = reactive({
 const formRef = ref() // 表单 Ref
 const models = ref([]) // 聊天模型列表
 
+// 定义 success 事件，用于操作成功后的回调
+const emit = defineEmits(['success'])
+
 /** 打开弹窗 */
 const open = async (conversation) => {
   dialogVisible.value = true
@@ -93,6 +104,7 @@ const open = async (conversation) => {
   if (conversation) {
     formData.value = {
       id: conversation.id,
+      title: conversation.title,
       systemMessage: conversation.systemMessage,
       modelId: conversation.modelId,
       temperature: conversation.temperature,
@@ -100,26 +112,20 @@ const open = async (conversation) => {
       maxContexts: conversation.maxContexts
     }
   }
-  formLoading.value = true
+  loading.value = true
   // 获得下拉数据
   await getModelSimpleList(AiModelTypeEnum.CHAT).then(response => {
     models.value = response.data
-    formLoading.value = false
+    loading.value = false
   })
 }
-
-// 暴露 open 方法，用于打开弹窗
-defineExpose({ open })
-
-// 定义 success 事件，用于操作成功后的回调
-const emit = defineEmits(['success'])
 
 /** 提交表单 */
 const submitForm = () => {
   // 校验表单
   formRef.value.validate(async valid => {
     if (valid) {
-      formLoading.value = true
+      loading.value = true
       try {
         const data = formData.value
         await updateChatConversationMy(data).then(() => {
@@ -129,7 +135,7 @@ const submitForm = () => {
           emit('success', formData.value.id)
         })
       } finally {
-        formLoading.value = false
+        loading.value = false
       }
     }
   })
@@ -139,6 +145,7 @@ const submitForm = () => {
 const resetForm = () => {
   formData.value = {
     id: undefined,
+    title: undefined,
     systemMessage: undefined,
     modelId: undefined,
     temperature: undefined,
@@ -147,4 +154,7 @@ const resetForm = () => {
   }
   formRef.value?.resetFields()
 }
+
+// 暴露 open 方法，用于打开弹窗
+defineExpose({ open })
 </script>

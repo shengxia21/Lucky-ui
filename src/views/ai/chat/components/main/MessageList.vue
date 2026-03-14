@@ -1,6 +1,6 @@
 <template>
   <div ref="messageContainer" class="message-list-container">
-    <div class="message-item-wrapper" v-for="(item, index) in list" :key="index">
+    <div class="message-item-wrapper" v-for="(item, index) in chatStore.messageList" :key="index">
       <!-- 靠左 message：system、assistant 类型 -->
       <div class="message-left-container" v-if="item.type !== 'user'">
         <div class="message-avatar">
@@ -10,17 +10,12 @@
           <div>
             <el-text class="message-time">{{ parseTime(item.createTime) }}</el-text>
           </div>
-          <div
-            class="message-bubble-left"
-            ref="markdownViewRef"
-          >
+          <div class="message-bubble-left" ref="markdownViewRef">
             <MessageReasoning
               :reasoning-content="item.reasoningContent || ''"
               :content="item.content || ''"
             />
-            <MarkdownView
-              :content="item.content"
-            />
+            <MarkdownView :content="item.content" />
           </div>
           <div class="message-actions-left">
             <el-button
@@ -53,10 +48,7 @@
           </div>
           <!-- 文本内容行 -->
           <div class="message-text-right">
-            <div
-              v-if="item.content && item.content.trim()"
-              class="message-user-bubble"
-            >
+            <div v-if="item.content && item.content.trim()" class="message-user-bubble">
               {{ item.content }}
             </div>
           </div>
@@ -79,14 +71,14 @@
             <el-button
               class="message-action-btn"
               link
-              @click="onRefresh(item)"
+              @click="onRefresh(item.content)"
             >
               <el-icon size="17"><RefreshRight /></el-icon>
             </el-button>
             <el-button
               class="message-action-btn"
               link
-              @click="onEdit(item)"
+              @click="onEdit(item.content)"
             >
               <el-icon size="17"><Edit /></el-icon>
             </el-button>
@@ -106,6 +98,7 @@ import MarkdownView from '@/components/MarkdownView/index.vue'
 import MessageReasoning from './MessageReasoning.vue'
 import { deleteChatMessage } from '@/api/ai/chat/message'
 import useUserStore from '@/store/modules/user'
+import useChatStore from '@/store/modules/chat'
 import userAvatarDefaultImg from '@/assets/images/profile.jpg'
 import roleAvatarDefaultImg from '@/assets/images/ai/gpt.svg'
 import { ArrowDownBold } from '@element-plus/icons-vue'
@@ -113,33 +106,36 @@ import { ArrowDownBold } from '@element-plus/icons-vue'
 const { proxy } = getCurrentInstance()
 
 const userStore = useUserStore()
+const chatStore = useChatStore()
 
 // 判断"消息列表"滚动的位置(用于判断是否需要滚动到消息最下方)
 const messageContainer = ref(null)
 const isScrolling = ref(false) //用于判断用户是否在滚动
 
 const userAvatar = computed(() => userStore.avatar || userAvatarDefaultImg)
-const roleAvatar = computed(() => props.conversation.roleAvatar ?? roleAvatarDefaultImg)
-
-// 定义 props
-const props = defineProps({
-  conversation: {
-    type: Object,
-    required: true
-  },
-  list: {
-    type: Array,
-    required: true
-  }
-})
-
-const { list } = toRefs(props) // 消息列表
-
-const emits = defineEmits(['onDeleteSuccess', 'onRefresh', 'onEdit']) // 定义 emits
+const roleAvatar = computed(() => chatStore.activeConversation?.roleAvatar || roleAvatarDefaultImg)
 
 // ============ 处理对话滚动 ==============
 
-/** 滚动到底部 */
+/** 回到顶部 */
+const handlerGoTop = () => {
+  const scrollContainer = messageContainer.value
+  scrollContainer.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+}
+
+/** 回到底部 */
+const handleGoBottom = () => {
+  const scrollContainer = messageContainer.value
+  scrollContainer.scrollTo({
+    top: scrollContainer.scrollHeight,
+    behavior: 'smooth'
+  });
+}
+
+/** 直接到底部(无动画效果，在pinia中调用) */
 const scrollToBottom = async (isIgnore) => {
   // 注意要使用 nextTick 以免获取不到 dom
   await nextTick()
@@ -149,7 +145,8 @@ const scrollToBottom = async (isIgnore) => {
   }
 }
 
-function handleScroll() {
+// 文本消息渲染时的滚动事件监听
+const handleScroll = () => {
   const scrollContainer = messageContainer.value
   const scrollTop = scrollContainer.scrollTop
   const scrollHeight = scrollContainer.scrollHeight
@@ -163,26 +160,6 @@ function handleScroll() {
   }
 }
 
-/** 回到底部 */
-const handleGoBottom = () => {
-  const scrollContainer = messageContainer.value
-  scrollContainer.scrollTo({
-    top: scrollContainer.scrollHeight,
-    behavior: 'smooth'
-  });
-}
-
-/** 回到顶部 */
-const handlerGoTop = () => {
-  const scrollContainer = messageContainer.value
-  scrollContainer.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
-}
-
-defineExpose({ scrollToBottom, handlerGoTop }) // 提供方法给 parent 调用
-
 // ============ 处理消息操作 ==============
 
 /** 复制 */
@@ -192,27 +169,31 @@ const copyTextSuccess = () => {
 
 /** 删除 */
 const onDelete = (id) => {
-  // 删除 message
+  if (chatStore.conversationInProgress) {
+    proxy.$modal.alert('回答中，不能删除!')
+    return
+  }
   deleteChatMessage(id).then(() => {
     proxy.$modal.msgSuccess('删除成功！')
-    // 回调
-    emits('onDeleteSuccess')
+    chatStore.getMessageList()
   })
 }
 
 /** 刷新 */
-const onRefresh = (messageItem) => {
-  emits('onRefresh', messageItem)
+const onRefresh = (content) => {
+  chatStore.sendMessage(content)
 }
 
 /** 编辑 */
-const onEdit = (messageItem) => {
-  emits('onEdit', messageItem)
+const onEdit = (content) => {
+  chatStore.prompt = content
 }
 
 /** 初始化 */
 onMounted(() => {
   messageContainer.value.addEventListener('scroll', handleScroll)
+  chatStore.setScrollTopCallback(() => handlerGoTop())
+  chatStore.setScrollBottomCallback((isIgnore) => scrollToBottom(isIgnore))
 })
 </script>
 

@@ -1,4 +1,3 @@
-<!-- AI 对话 -->
 <template>
   <el-aside class="ai-chat-aside">
     <!-- 左顶部：对话 -->
@@ -40,7 +39,7 @@
           >
             <div
               class="conversation-item"
-              :class="{ 'conversation-item-active': conversation.id == activeConversationId }"
+              :class="{ 'conversation-item-active': conversation.id == chatStore.activeConversationId }"
             >
               <div class="conversation-info">
                 <img class="conversation-avatar" :src="conversation.roleAvatar" />
@@ -48,15 +47,12 @@
                   {{ conversation.title }}
                 </span>
               </div>
-              <div
-                class="conversation-actions"
-                v-show="hoverConversationId === conversation.id"
-              >
+              <div class="conversation-actions" v-show="hoverConversationId === conversation.id">
                 <el-button class="action-btn" link @click.stop="handleTop(conversation)">
                   <el-icon title="置顶" v-if="!conversation.pinned"><Top /></el-icon>
                   <el-icon title="置顶" v-if="conversation.pinned"><Bottom /></el-icon>
                 </el-button>
-                <el-button class="action-btn" link @click.stop="updateConversationTitle(conversation)">
+                <el-button class="action-btn" link @click.stop="handleEditConversation(conversation)">
                   <el-icon title="编辑">
                     <el-icon><Edit /></el-icon>
                   </el-icon>
@@ -77,17 +73,11 @@
 
     <!-- 左底部：工具栏 -->
     <div class="ai-chat-toolbar" v-if="conversationList.length > 0">
-      <div
-        class="toolbar-item"
-        @click="handleRoleRepository"
-      >
+      <div class="toolbar-item" @click="handleRoleRepository">
         <el-icon><User /></el-icon>
         <el-text class="toolbar-text" size="small">角色仓库</el-text>
       </div>
-      <div
-        class="toolbar-item"
-        @click="handleClearConversation"
-      >
+      <div class="toolbar-item" @click="handleClearConversation">
         <el-icon><Delete /></el-icon>
         <el-text class="toolbar-text" size="small">清空未置顶对话</el-text>
       </div>
@@ -95,45 +85,47 @@
 
     <!-- 角色仓库抽屉 -->
     <el-drawer v-model="roleRepositoryOpen" title="角色仓库" size="754px">
-      <RoleRepository @onUseRole="handleRoleUse"  />
+      <RoleRepository @onUseRole="handleRoleUse" />
     </el-drawer>
+
+    <!-- 更新对话 Form -->
+    <ConversationUpdateForm
+      ref="conversationUpdateFormRef"
+      @success="handleConversationUpdateSuccess"
+    />
   </el-aside>
 </template>
 
-<script setup name="ConversationList">
+<script setup name="ChatAside">
 import { getChatConversationMyList, createChatConversationMy,
   updateChatConversationMy, deleteChatConversationMy,
   deleteChatConversationMyByUnpinned } from '@/api/ai/chat/conversation'
 import roleAvatarDefaultImg from '@/assets/images/ai/gpt.svg'
 import RoleRepository from '../role/RoleRepository.vue'
+import ConversationUpdateForm from './ConversationUpdateForm.vue'
+import useChatStore from '@/store/modules/chat'
 
 const { proxy } = getCurrentInstance()
+const chatStore = useChatStore()
 
 // 定义属性
 const searchName = ref('') // 对话搜索
-const activeConversationId = ref(null) // 选中的对话，默认为 null
 const hoverConversationId = ref(null) // 悬浮上去的对话
 const conversationList = ref([]) // 对话列表
 const conversationMap = ref({}) // 对话分组 (置顶、今天、三天前、一星期前、一个月前)
 const loading = ref(false) // 加载中
 const roleRepositoryOpen = ref(false) // 角色仓库是否打开
+const conversationUpdateFormRef = ref() // 更新对话 Form 引用
 
-// 定义组件 props
-const props = defineProps({
-  activeId: {
-    type: [String, Number],
-    required: true
-  }
-})
+/** 处理聊天对话更新成功 */
+const handleConversationUpdateSuccess = (id) => {
+  refreshConversationList(id)
+}
 
-// 定义钩子
-const emits = defineEmits([
-  'onConversationCreate',
-  'onConversationClick',
-  'onConversationClear',
-  'onConversationDelete',
-  'onConversationUpdated'
-])
+/** 编辑对话 */
+const handleEditConversation = (conversation) => {
+  conversationUpdateFormRef.value.open(conversation)
+}
 
 /** 搜索对话 */
 const searchConversation = () => {
@@ -150,13 +142,27 @@ const searchConversation = () => {
 }
 
 /** 点击对话 */
-const handleConversationClick = (id) => {
+const handleConversationClick = async (id) => {
+  // 对话进行中，不允许切换
+  if (chatStore.conversationInProgress) {
+    proxy.$modal.alert('对话中，不允许切换!')
+    return
+  }
+
   // 过滤出选中的对话
-  const filterConversation = conversationList.value.filter((item) => {
-    return item.id === id
-  })
-  // 回调 onConversationClick
-  emits('onConversationClick', filterConversation[0])
+  const filterConversation = conversationList.value.filter((item) => item.id === id)
+
+  // 更新选中的对话
+  chatStore.setActiveConversation(filterConversation[0])
+
+  // 获取消息列表
+  await chatStore.getMessageList()
+  // 滚动到底部
+  chatStore.scrollToBottom(true)
+
+  // 清空输入框
+  chatStore.prompt = ''
+  chatStore.uploadFiles = []
 }
 
 /** 获取对话列表 */
@@ -166,13 +172,12 @@ const getChatConversationList = async () => {
     loading.value = true
 
     // 1.1 获取对话数据
-    await getChatConversationMyList().then(response => {
-      conversationList.value = response.data.map(item => {
-        return {
-          ...item,
-          roleAvatar: item.roleAvatar ? import.meta.env.VITE_APP_BASE_API + item.roleAvatar : roleAvatarDefaultImg
-        }
-      })
+    const { data: conversationListData } = await getChatConversationMyList()
+    conversationList.value = conversationListData.map(item => {
+      return {
+        ...item,
+        roleAvatar: item.roleAvatar ? import.meta.env.VITE_APP_BASE_API + item.roleAvatar : roleAvatarDefaultImg
+      }
     })
     // 1.2 排序
     conversationList.value.sort((a, b) => {
@@ -180,7 +185,7 @@ const getChatConversationList = async () => {
     })
     // 1.3 没有任何对话情况
     if (conversationList.value.length === 0) {
-      activeConversationId.value = null
+      chatStore.clearActiveConversation()
       conversationMap.value = {}
       return
     }
@@ -239,47 +244,31 @@ const getConversationGroupByCreateTime = (list) => {
 /** 新建对话 */
 const createConversation = async () => {
   // 1. 新建对话
-  let conversationId = 0;
-  await createChatConversationMy({}).then(response => {
-    conversationId = response.data
-  })
-  // 2. 获取对话内容
+  const { data: conversationId } = await createChatConversationMy({})
+  // 2. 刷新会话列表
   await getChatConversationList()
-  // 3. 选中对话
-  handleConversationClick(conversationId)
-  // 4. 回调
-  emits('onConversationCreate')
-}
-
-/** 修改对话的标题 */
-const updateConversationTitle = (conversation) => {
-  // 二次确认
-  proxy.$prompt("修改标题", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    inputPattern: /^[\s\S]*.*\S[\s\S]*$/,
-    inputErrorMessage: "标题不能为空",
-    inputValue: conversation.title
-  }).then(({ value }) => {
-    return updateChatConversationMy({ id: conversation.id, title: value })
-  }).then(() => {
-    proxy.$modal.msgSuccess("重命名成功")
-    // 3. 刷新列表
-    getChatConversationList()
-  }).catch(() => {})
+  // 3. 选中对话（内部已处理 store 更新和消息获取）
+  await handleConversationClick(conversationId)
 }
 
 /** 删除聊天对话 */
 const deleteChatConversation = (conversation) => {
+  // 对话进行中，不允许删除
+  if (chatStore.conversationInProgress) {
+    proxy.$modal.alert('对话中，不允许删除!')
+    return
+  }
   // 删除的二次确认
   proxy.$modal.confirm(`是否确认删除对话 - ${conversation.title}?`).then(() => {
     return deleteChatConversationMy(conversation.id)
-  }).then(() => {
+  }).then(async () => {
     proxy.$modal.msgSuccess('对话已删除')
     // 刷新列表
-    getChatConversationList()
-    // 回调
-    emits('onConversationDelete', conversation)
+    await getChatConversationList()
+    // 如果删除的是当前选中的对话，则清空
+    if (chatStore.activeConversationId === conversation.id) {
+      chatStore.clearActiveConversation()
+    }
   }).catch(() => {})
 }
 
@@ -293,73 +282,59 @@ const handleRoleUse = async (role) => {
   // 1. 关闭角色仓库
   roleRepositoryOpen.value = false
   // 2. 创建角色对话
-  await createChatConversationMy({ roleId: role.id })
+  const { data: conversationId } = await createChatConversationMy({ roleId: role.id })
   // 3. 刷新列表
   await getChatConversationList()
-  // 4. 选中对话
-  emits('onConversationClick', conversationList.value[0])
+  // 4. 选中对话并获取消息
+  await handleConversationClick(conversationId)
 }
 
 /** 清空对话 */
 const handleClearConversation = () => {
+  // 对话进行中，不允许清空
+  if (chatStore.conversationInProgress) {
+    proxy.$modal.alert('对话中，不允许清空!')
+    return
+  }
   proxy.$modal.confirm('确认后对话会全部清空，置顶的对话除外。').then(() => {
     return deleteChatConversationMyByUnpinned()
   }).then(() => {
     proxy.$modal.msgSuccess('操作成功!')
-    // 清空对话和对话内容
-    activeConversationId.value = null
+    // 清空当前选中的对话
+    chatStore.clearActiveConversation()
     // 获取对话列表
     getChatConversationList()
-    // 回调方法
-    emits('onConversationClear')
   }).catch(() => {})
 }
 
 /** 对话置顶 */
 const handleTop = async (conversation) => {
   // 更新对话置顶
-  conversation.pinned = !conversation.pinned
-  await updateChatConversationMy(conversation).then(() => {
-    proxy.$modal.msgSuccess('操作成功!')
-  })
+  const pinned = !conversation.pinned
+  await updateChatConversationMy({ id: conversation.id, pinned: pinned })
+  proxy.$modal.msgSuccess('操作成功!')
   // 刷新对话
   await getChatConversationList()
 }
 
 /** 刷新对话列表 */
 const refreshConversationList = async (id) => {
-  await getChatConversationMyList().then(response => {
-    conversationList.value = response.data
-  })
-  // 找到更新的对话
+  // 更新对话列表
+  await getChatConversationList()
+  // 查找需要刷新的对话
   const conversation = conversationList.value.find(item => item.id === id)
-  // 回调 onConversationUpdated
-  emits('onConversationUpdated', conversation)
+  // 更新 store 中的对话信息
+  chatStore.setActiveConversation(conversation)
 }
-
-/** 监听选中的对话 */
-const { activeId } = toRefs(props)
-watch(activeId, (newValue) => {
-  activeConversationId.value = newValue
-})
-
-// 暴露给父组件调用的方法
-defineExpose({ createConversation, refreshConversationList })
 
 /** 初始化 */
 onMounted(async () => {
   // 获取对话列表
   await getChatConversationList()
-  // 默认选中
-  if (props.activeId) {
-    activeConversationId.value = props.activeId
-  } else {
-    // 首次默认选中第一个
-    if (conversationList.value.length) {
-      activeConversationId.value = conversationList.value[0].id
-      // 回调 onConversationClick
-      emits('onConversationClick', conversationList.value[0])
-    }
+  // 存在会话则默认选中第一个
+  if (conversationList.value.length) {
+    // 选中对话并获取消息
+    await handleConversationClick(conversationList.value[0].id)
   }
 })
 </script>

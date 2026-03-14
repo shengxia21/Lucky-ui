@@ -1,10 +1,7 @@
 <template>
   <div v-if="shouldShowComponent" class="reasoning-component">
     <!-- 推理过程标题栏 -->
-    <div
-      class="reasoning-header"
-      @click="toggleExpanded"
-    >
+    <div class="reasoning-header" @click="toggleExpanded">
       <div class="reasoning-header-title">
         <el-icon :size="16" class="reasoning-header-icon"><ChatDotSquare /></el-icon>
         <span>{{ titleText }}</span>
@@ -17,10 +14,7 @@
     </div>
 
     <!-- 推理内容区域 -->
-    <div
-      v-show="isExpanded"
-      class="reasoning-content"
-    >
+    <div v-show="isExpanded" class="reasoning-content">
       <MarkdownView
         v-if="props.reasoningContent"
         class="reasoning-markdown"
