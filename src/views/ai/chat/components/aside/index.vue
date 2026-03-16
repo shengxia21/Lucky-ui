@@ -101,7 +101,7 @@ import { getChatConversationMyList, createChatConversationMy,
   updateChatConversationMy, deleteChatConversationMy,
   deleteChatConversationMyByUnpinned } from '@/api/ai/chat/conversation'
 import roleAvatarDefaultImg from '@/assets/images/ai/gpt.svg'
-import RoleRepository from '../role/RoleRepository.vue'
+import RoleRepository from '../Role/index.vue'
 import ConversationUpdateForm from './ConversationUpdateForm.vue'
 import useChatStore from '@/store/modules/chat'
 

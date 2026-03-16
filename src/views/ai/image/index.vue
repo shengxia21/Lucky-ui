@@ -1,24 +1,24 @@
 <template>
   <div class="image-page">
     <div class="left-sidebar">
-      <common ref="commonRef" @onDrawComplete="handleDrawComplete" />
+      <image-aside ref="commonRef" @onDrawComplete="handleDrawComplete" />
     </div>
     <div class="main-content">
-      <image-list ref="imageListRef" />
+      <image-main ref="imageMainRef" />
     </div>
   </div>
 </template>
 
 <script setup name="Image">
-import Common from './components/common/index.vue'
-import ImageList from './components/imageInfo/ImageList.vue'
+import ImageAside from './components/Aside/index.vue'
+import ImageMain from './components/Main/index.vue'
 
-const commonRef = ref()
-const imageListRef = ref()
+const imageAsideRef = ref()
+const imageMainRef = ref()
 
 /** 生成图片完成后,刷新图片列表 */
 const handleDrawComplete = () => {
-  imageListRef.value.getImageList()
+  imageMainRef.value.getImageList()
 }
 </script>
 

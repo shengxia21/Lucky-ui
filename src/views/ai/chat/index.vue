@@ -18,10 +18,10 @@
 </template>
 
 <script setup name="AiChat">
-import ChatAside from './components/aside/ChatAside.vue'
-import ChatHeader from './components/header/ChatHeader.vue'
-import ChatMain from './components/main/ChatMain.vue'
-import ChatFooter from './components/footer/ChatFooter.vue'
+import ChatAside from './components/Aside/index.vue'
+import ChatHeader from './components/Header/index.vue'
+import ChatMain from './components/Main/index.vue'
+import ChatFooter from './components/Footer/index.vue'
 </script>
 
 <style lang="scss" scoped>
