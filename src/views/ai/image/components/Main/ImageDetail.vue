@@ -53,15 +53,13 @@ const props = defineProps({
 
 const emits = defineEmits(['close'])
 
-const { show, imageId } = toRefs(props)
-
-watch(show, (newVal, _oldVal) => {
+watch(() => props.show, (newVal, _oldVal) => {
   showDrawer.value = newVal
 })
 
-watch(imageId, async (newVal, _oldVal) => {
+watch(() => props.imageId, (newVal, _oldVal) => {
   if (newVal) {
-    await getImageDetail(newVal)
+    getImageDetail(newVal)
   }
 })
 

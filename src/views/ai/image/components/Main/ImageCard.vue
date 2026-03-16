@@ -57,8 +57,8 @@
 
     <!-- 图片详情 -->
     <image-detail
-      :show="isShowImageDetail"
-      :image-id="showImageDetailId"
+      :show="showDetail"
+      :image-id="imageId"
       @close="handleDetailClose"
     />
   </el-card>
@@ -79,24 +79,22 @@ const props = defineProps({
   }
 })
 
-const { detail } = toRefs(props)
-
-watch(detail, (newVal, _oldVal) => {
+watch(() => props.detail, (newVal, _oldVal) => {
   handleLoading(newVal.status)
 })
 
 const emits = defineEmits(['onDeleteSuccess', 'onRegeneration'])
 
 const loading = ref(false)  // 图片加载中
-const isShowImageDetail = ref(false) // 是否显示图片详情
-const showImageDetailId = ref(undefined) // 图片详情ID
+const showDetail = ref(false) // 是否显示图片详情
+const imageId = ref('') // 图片详情ID
 
 // 处理按钮点击事件
 const handleButtonClick = (type, imageDetail) => {
   // 详情
   if (type === 'more') {
-    showImageDetailId.value = imageDetail.id
-    isShowImageDetail.value = true
+    imageId.value = imageDetail.id
+    showDetail.value = true
   }
   // 删除
   else if (type === 'delete') {
@@ -109,10 +107,10 @@ const handleButtonClick = (type, imageDetail) => {
   }
   // 下载
   else if (type === 'download') {
-    if (detail.value.status === AiImageStatusEnum.IN_PROGRESS) {
+    if (props.detail.status === AiImageStatusEnum.IN_PROGRESS) {
       proxy.$modal.msgError('照片还未生成完成，无法下载')
       return
-    } else if (detail.value.status === AiImageStatusEnum.FAIL) {
+    } else if (props.detail.status === AiImageStatusEnum.FAIL) {
       proxy.$modal.msgError('照片生成失败，无法下载')
       return
     }
@@ -126,8 +124,8 @@ const handleButtonClick = (type, imageDetail) => {
 
 // 关闭详情抽屉
 const handleDetailClose = () => {
-  isShowImageDetail.value = false
-  showImageDetailId.value = undefined
+  showDetail.value = false
+  imageId.value = ''
 }
 
 // 处理图片加载状态
@@ -140,7 +138,7 @@ const handleLoading = (status) => {
 }
 
 onMounted(() => {
-  handleLoading(detail.value.status)
+  handleLoading(props.detail.status)
 })
 </script>
 

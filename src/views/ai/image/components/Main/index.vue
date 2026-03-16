@@ -34,7 +34,7 @@
   </el-card>
 </template>
 
-<script setup name="ImageList">
+<script setup name="ImageMain">
 import { getMyImagePage, getImageListMyByIds } from '@/api/ai/image'
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'
 import ImageCard from './ImageCard.vue'

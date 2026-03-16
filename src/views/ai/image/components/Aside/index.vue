@@ -1,9 +1,9 @@
 <template>
   <div class="common-form">
-    <el-form :model="formData" :rules="rules" label-position="top" require-asterisk-position="right">
+    <el-form :model="form" :rules="rules" label-position="top" require-asterisk-position="right">
       <!-- 模型选择 -->
       <el-form-item label="生成模型" prop="modelId">
-        <el-select v-model="formData.modelId" placeholder="请选择生成图片模型">
+        <el-select v-model="form.modelId" placeholder="请选择生成图片模型">
           <el-option
             v-for="item in models"
             :key="item.id"
@@ -16,7 +16,7 @@
       <!-- 正向提示词 -->
       <el-form-item label="正向提示词" prop="prompt">
         <el-input
-          v-model="formData.prompt"
+          v-model="form.prompt"
           type="textarea"
           :rows="4"
           placeholder="请输入想要生成的图片描述内容"
@@ -29,7 +29,7 @@
       <!-- 负向提示词 -->
       <el-form-item v-if="showNegativePrompt" label="负向提示词" prop="negativePrompt">
         <el-input
-          v-model="formData.negativePrompt"
+          v-model="form.negativePrompt"
           type="textarea"
           :rows="4"
           placeholder="请输入用于指定不希望生成的内容"
@@ -45,8 +45,8 @@
           <el-button
             v-for="size in currentSizePresets"
             :key="size.label"
-            :type="formData.size === size.value ? 'primary' : 'default'"
-            @click="formData.size = size.value"
+            :type="form.size === size.value ? 'primary' : 'default'"
+            @click="form.size = size.value"
           >
             {{ size.label }}
           </el-button>
@@ -55,7 +55,7 @@
 
       <!-- 提示词扩展 -->
       <el-form-item label="智能扩写" prop="promptExtend" label-position="left">
-        <el-switch v-model="formData.promptExtend" />
+        <el-switch v-model="form.promptExtend" />
       </el-form-item>
 
       <!-- 生成按钮 -->
@@ -65,7 +65,7 @@
           size="large"
           round
           :loading="drawIn"
-          :disabled="formData.prompt.length === 0"
+          :disabled="form.prompt.length === 0"
           @click="handleGenerateImage"
           style="width: 100%;"
         >
@@ -76,7 +76,7 @@
   </div>
 </template>
 
-<script setup name="Common">
+<script setup name="ImageAside">
 import { getModelSimpleList } from '@/api/ai/console/model'
 import { AiModelTypeEnum, modelSizeMap } from '@/utils/constants/aiConstant'
 import { drawImage } from '@/api/ai/image'
@@ -88,24 +88,23 @@ const drawIn = ref(false) // 生成中状态
 const currentSizePresets = ref([])  // 图片分辨率选项
 const showNegativePrompt = ref(false) // 是否显示负向提示词
 
-const formData = reactive({
-  modelId: '',
-  prompt: '',
-  negativePrompt: '',
-  size: '1328*1328',
-  promptExtend: false
+const data = reactive({
+  form: {
+    modelId: '',
+    prompt: '',
+    negativePrompt: '',
+    size: '1328*1328',
+    promptExtend: false
+  },
+  rules: {
+    modelId: [{ required: true, message: '请选择生成图片模型', trigger: 'change' }],
+    prompt: [{ required: true, message: '请输入正向提示词', trigger: 'blur' }]
+  }
 })
 
-const rules = reactive({
-  modelId: [
-    { required: true, message: '请选择生成图片模型', trigger: 'change' }
-  ],
-  prompt: [
-    { required: true, message: '请输入正向提示词', trigger: 'blur' }
-  ]
-})
+const { form, rules } = toRefs(data)
 
-watch(() => formData.modelId, () => {
+watch(() => form.value.modelId, () => {
   updateSizePresets()
 })
 
@@ -113,7 +112,7 @@ const emits = defineEmits(['onDrawComplete'])
 
 // 更新图片分辨率选项
 const updateSizePresets = () => {
-  const model = models.value.find(m => m.id === formData.modelId)
+  const model = models.value.find(m => m.id === form.value.modelId)
   // 如果模型存在,则使用该模型的尺寸选项
   if (model && model.model && modelSizeMap[model.model]) {
     const modelConfig = modelSizeMap[model.model]
@@ -126,7 +125,7 @@ const updateSizePresets = () => {
   }
   // 初始化图片分辨率为第一个选项
   if (currentSizePresets.value.length > 0) {
-    formData.size = currentSizePresets.value[0].value
+    form.value.size = currentSizePresets.value[0].value
   }
 }
 
@@ -137,38 +136,37 @@ const handleGenerateImage = async () => {
     drawIn.value = true
     proxy.$modal.msg("正在生成,请稍后查看!")
 
-    const [width, height] = formData.size.split('*').map(Number)
+    const [width, height] = form.size.split('*').map(Number)
     const requestData = {
-      modelId: formData.modelId,
-      prompt: formData.prompt,
+      modelId: form.value.modelId,
+      prompt: form.value.prompt,
       width: width,
       height: height,
       options: {
-        negativePrompt: formData.negativePrompt,
-        promptExtend: formData.promptExtend
+        negativePrompt: form.value.negativePrompt,
+        promptExtend: form.value.promptExtend
       }
     }
 
     await drawImage(requestData)
   } finally {
-    formData.prompt = ''
-    formData.negativePrompt = ''
+    form.value.prompt = ''
+    form.value.negativePrompt = ''
     emits('onDrawComplete')
     drawIn.value = false
   }
 }
 
 /** 组件挂载的时候 */
-onMounted(() => {
+onMounted(async() => {
   // 获取模型列表
-  getModelSimpleList(AiModelTypeEnum.IMAGE).then(response => {
-    models.value = response.data
-    // 初始化模型ID为第一个模型
-    if (models.value.length > 0) {
-      formData.modelId = models.value[0].id
-      updateSizePresets()
-    }
-  })
+  const response = await getModelSimpleList(AiModelTypeEnum.IMAGE)
+  models.value = response.data
+  // 初始化模型ID为第一个模型
+  if (models.value.length > 0) {
+    form.value.modelId = models.value[0].id
+    updateSizePresets()
+  }
 })
 </script>
 
