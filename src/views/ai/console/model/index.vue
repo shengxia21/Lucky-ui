@@ -289,13 +289,13 @@ function submitForm() {
   proxy.$refs["modelRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updateModel(form.value).then(response => {
+        updateModel(form.value).then(() => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
-        addModel(form.value).then(response => {
+        addModel(form.value).then(() => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()

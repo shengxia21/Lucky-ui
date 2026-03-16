@@ -128,7 +128,7 @@ function resetQuery() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _id = row.id
-  proxy.$modal.confirm('是否确认删除AI 聊天对话编号为"' + _id + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除AI 聊天对话编号为"' + _id + '"的数据项？').then(() => {
     return delConversation(_id)
   }).then(() => {
     getList()

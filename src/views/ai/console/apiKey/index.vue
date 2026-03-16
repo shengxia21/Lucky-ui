@@ -224,13 +224,13 @@ function submitForm() {
   proxy.$refs["keyRef"].validate(valid => {
     if (valid) {
       if (form.value.id != null) {
-        updateKey(form.value).then(response => {
+        updateKey(form.value).then(() => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
-        addKey(form.value).then(response => {
+        addKey(form.value).then(() => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()
@@ -243,7 +243,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _id = row.id
-  proxy.$modal.confirm('是否确认删除API 秘钥编号为"' + _id + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除API 秘钥编号为"' + _id + '"的数据项？').then(() => {
     return delKey(_id)
   }).then(() => {
     getList()

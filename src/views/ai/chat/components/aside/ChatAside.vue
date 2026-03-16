@@ -52,7 +52,7 @@
                   <el-icon title="置顶" v-if="!conversation.pinned"><Top /></el-icon>
                   <el-icon title="置顶" v-if="conversation.pinned"><Bottom /></el-icon>
                 </el-button>
-                <el-button class="action-btn" link @click.stop="handleEditConversation(conversation)">
+                <el-button class="action-btn" link @click.stop="handleEditConversation(conversation.id)">
                   <el-icon title="编辑">
                     <el-icon><Edit /></el-icon>
                   </el-icon>
@@ -91,7 +91,7 @@
     <!-- 更新对话 Form -->
     <ConversationUpdateForm
       ref="conversationUpdateFormRef"
-      @success="handleConversationUpdateSuccess"
+      @success="refreshConversationList"
     />
   </el-aside>
 </template>
@@ -117,14 +117,9 @@ const loading = ref(false) // 加载中
 const roleRepositoryOpen = ref(false) // 角色仓库是否打开
 const conversationUpdateFormRef = ref() // 更新对话 Form 引用
 
-/** 处理聊天对话更新成功 */
-const handleConversationUpdateSuccess = (id) => {
-  refreshConversationList(id)
-}
-
 /** 编辑对话 */
-const handleEditConversation = (conversation) => {
-  conversationUpdateFormRef.value.open(conversation)
+const handleEditConversation = (id) => {
+  conversationUpdateFormRef.value.openForm(id)
 }
 
 /** 搜索对话 */

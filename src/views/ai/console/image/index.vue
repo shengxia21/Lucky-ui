@@ -182,7 +182,7 @@ function resetQuery() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   const _id = row.id
-  proxy.$modal.confirm('是否确认删除AI 绘画编号为"' + _id + '"的数据项？').then(function() {
+  proxy.$modal.confirm('是否确认删除AI 绘画编号为"' + _id + '"的数据项？').then(() => {
     return delImage(_id)
   }).then(() => {
     getList()
@@ -194,7 +194,7 @@ function handleDelete(row) {
 function handleUpdatePublicStatusChange(row) {
   // 修改状态的二次确认
   const text = row.publicStatus ? '公开' : '私有'
-  proxy.$modal.confirm('确认要' + text + '该图片吗？').then(function() {
+  proxy.$modal.confirm('确认要' + text + '该图片吗？').then(() => {
     return updateImage({
       id: row.id,
       publicStatus: row.publicStatus

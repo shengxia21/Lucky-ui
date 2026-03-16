@@ -90,12 +90,10 @@ import { getRole, addRole, updateRole, addMyRole, updateMyRole } from "@/api/ai/
 import { getModelSimpleList } from "@/api/ai/console/model"
 import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 
-defineExpose({ openDialog }) // 提供 open 方法，用于打开弹窗
-
-const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
-
 const { proxy } = getCurrentInstance()
 const { boolean_string, sys_normal_disable, ai_mcp_client_name } = proxy.useDict('boolean_string', 'sys_normal_disable', 'ai_mcp_client_name')
+
+const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
 
 /** 是否【我】自己创建，私有角色 */
 const isUser = computed(() => {
@@ -207,4 +205,6 @@ function submitForm() {
   })
 }
 
+ // 提供 open 方法，用于打开弹窗
+defineExpose({ openDialog })
 </script>
