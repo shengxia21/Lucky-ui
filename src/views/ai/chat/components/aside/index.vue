@@ -84,9 +84,7 @@
     </div>
 
     <!-- 角色仓库抽屉 -->
-    <el-drawer v-model="roleRepositoryOpen" title="角色仓库" size="754px">
-      <RoleRepository @onUseRole="handleRoleUse" />
-    </el-drawer>
+    <RoleDrawer ref="roleDrawerRef" @onUseRole="handleRoleUse" />
 
     <!-- 更新对话 Form -->
     <ConversationUpdateForm
@@ -101,7 +99,7 @@ import { getChatConversationMyList, createChatConversationMy,
   updateChatConversationMy, deleteChatConversationMy,
   deleteChatConversationMyByUnpinned } from '@/api/ai/chat/conversation'
 import roleAvatarDefaultImg from '@/assets/images/ai/gpt.svg'
-import RoleRepository from '../Role/index.vue'
+import RoleDrawer from '../Role/index.vue'
 import ConversationUpdateForm from './ConversationUpdateForm.vue'
 import useChatStore from '@/store/modules/chat'
 
@@ -114,12 +112,17 @@ const hoverConversationId = ref(null) // 悬浮上去的对话
 const conversationList = ref([]) // 对话列表
 const conversationMap = ref({}) // 对话分组 (置顶、今天、三天前、一星期前、一个月前)
 const loading = ref(false) // 加载中
-const roleRepositoryOpen = ref(false) // 角色仓库是否打开
+const roleDrawerRef = ref() // 角色仓库引用
 const conversationUpdateFormRef = ref() // 更新对话 Form 引用
 
 /** 编辑对话 */
 const handleEditConversation = (id) => {
   conversationUpdateFormRef.value.openForm(id)
+}
+
+/** 角色仓库 */
+const handleRoleRepository = () => {
+  roleDrawerRef.value.openDrawer()
 }
 
 /** 搜索对话 */
@@ -267,20 +270,13 @@ const deleteChatConversation = (conversation) => {
   }).catch(() => {})
 }
 
-/** 角色仓库 */
-const handleRoleRepository = () => {
-  roleRepositoryOpen.value = !roleRepositoryOpen.value
-}
-
 /** 使用角色 */
 const handleRoleUse = async (role) => {
-  // 1. 关闭角色仓库
-  roleRepositoryOpen.value = false
-  // 2. 创建角色对话
+  // 1. 创建角色对话
   const { data: conversationId } = await createChatConversationMy({ roleId: role.id })
-  // 3. 刷新列表
+  // 2. 刷新列表
   await getChatConversationList()
-  // 4. 选中对话并获取消息
+  // 3. 选中对话并获取消息
   await handleConversationClick(conversationId)
 }
 
