@@ -12,7 +12,7 @@
         @change="handleSearch"
       />
       <el-button
-        v-if="type === 'my'"
+        v-if="roleType === 'my'"
         type="primary"
         @click="handleAddRole"
         class="add-role-btn"
@@ -23,68 +23,78 @@
     </div>
 
     <!-- 分类列表（仅公共角色显示） -->
-    <RoleCategoryList
-      v-if="type === 'public'"
-      class="category-list"
-      :category-list="categoryList"
-      :active="activeCategory"
-      @on-category-click="handleCategoryClick"
-    />
+    <div v-if="roleType === 'public'" class="category-list">
+      <div class="category-item" v-for="category in categoryList" :key="category">
+        <el-button
+          plain
+          round
+          size="small"
+          :type="category === activeCategory ? 'primary' : ''"
+          @click="handleCategoryClick(category)"
+        >
+          {{ category }}
+        </el-button>
+      </div>
+    </div>
 
     <!-- 角色列表 -->
     <div class="role-list-container" v-loading="loading">
       <el-empty v-if="roleList.length === 0" description="暂无数据" />
-      <div v-else class="role-cards">
-        <el-card v-for="role in roleList" :key="role.id" class="role-card">
-          <!-- 更多操作（仅我的角色显示） -->
-          <div class="more-actions" v-if="type === 'my'">
-            <el-dropdown @command="handleMoreClick">
-              <span>
-                <el-button type="text">
-                  <el-icon><More /></el-icon>
-                </el-button>
-              </span>
-              <template #dropdown>
-                <el-dropdown-menu>
-                  <el-dropdown-item :command="['edit', role]" style="color: var(--el-text-color-placeholder)">
-                    <el-icon><Edit /></el-icon>编辑
-                  </el-dropdown-item>
-                  <el-dropdown-item :command="['delete', role]" style="color: var(--el-color-danger)">
-                    <el-icon><Delete /></el-icon>删除
-                  </el-dropdown-item>
-                </el-dropdown-menu>
-              </template>
-            </el-dropdown>
-          </div>
-          <!-- 角色信息 -->
-          <div class="role-content-layout">
-            <!-- 左侧：头像、名称、描述 -->
-            <div class="role-left">
-              <div class="role-avatar">
-                <image-preview :src="role.avatar" :width="65" :height="65" />
+      <div v-else class="role-grid">
+        <div v-for="role in roleList" :key="role.id">
+          <!-- 角色卡片 -->
+          <div class="role-card">
+            <!-- 顶部操作区 -->
+            <div class="card-header">
+              <div v-if="roleType === 'my'">
+                <el-dropdown @command="handleMoreClick">
+                  <span class="more-btn">
+                    <el-icon><More /></el-icon>
+                  </span>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <el-dropdown-item :command="['edit', role]">
+                        <el-icon><Edit /></el-icon>编辑
+                      </el-dropdown-item>
+                      <el-dropdown-item :command="['delete', role]" style="color: var(--el-color-danger)">
+                        <el-icon><Delete /></el-icon>删除
+                      </el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
               </div>
-              <div class="role-basic-info">
+            </div>
+
+            <!-- 头像与基本信息 -->
+            <div class="card-body">
+              <image-preview :src="role.avatar" :width="75" :height="75" />
+
+              <div class="role-info">
                 <div class="role-name">{{ role.name }}</div>
-                <div class="role-description">{{ role.description }}</div>
+                <div class="role-desc" :title="role.description">
+                  {{ role.description }}
+                </div>
               </div>
             </div>
-            <!-- 右侧：系统消息 -->
-            <div class="role-right">
-              <div class="role-system-message-label">系统消息</div>
-              <el-tooltip
-                :content="role.systemMessage"
-                placement="top"
-              >
-                <div class="role-system-message">
-                  {{ role.systemMessage }}
-                </div>
-              </el-tooltip>
+
+            <!-- 系统消息 -->
+            <div class="card-footer">
+              <div class="system-msg-label">
+                <span>系统消息</span>
+              </div>
+              <div class="system-msg-content" :title="role.systemMessage">
+                {{ role.systemMessage }}
+              </div>
+            </div>
+
+            <!-- 底部操作按钮 -->
+            <div class="card-actions">
+              <el-button type="primary" size="default" round @click="handleUseClick(role)">
+                使用
+              </el-button>
             </div>
           </div>
-          <div class="role-actions">
-            <el-button type="primary" size="small" @click="handleUseClick(role)">使用</el-button>
-          </div>
-        </el-card>
+        </div>
       </div>
     </div>
 
@@ -104,7 +114,6 @@
 
 <script setup name="RoleList">
 import ChatRoleForm from '@/views/ai/console/chatRole/ChatRoleForm.vue'
-import RoleCategoryList from './RoleCategoryList.vue'
 import { listMyRole, getCategoryList, delMyRole } from '@/api/ai/console/chatRole'
 import { Search } from '@element-plus/icons-vue'
 
@@ -112,7 +121,7 @@ const { proxy } = getCurrentInstance()
 
 // 定义属性
 const props = defineProps({
-  type: {
+  roleType: {
     type: String,
     required: true,
     validator: (value) => ['my', 'public'].includes(value)
@@ -142,8 +151,8 @@ const getList = () => {
   loading.value = true
   const params = {
     ...queryParams,
-    publicStatus: props.type === 'public',
-    category: props.type === 'public' && activeCategory.value !== '全部' ? activeCategory.value : ''
+    publicStatus: props.roleType === 'public',
+    category: props.roleType === 'public' && activeCategory.value !== '全部' ? activeCategory.value : ''
   }
   listMyRole(params).then(response => {
     roleList.value = response.rows
@@ -154,7 +163,7 @@ const getList = () => {
 
 /** 获取分类列表（仅公共角色需要） */
 const getRoleCategoryList = () => {
-  if (props.type === 'public') {
+  if (props.roleType === 'public') {
     getCategoryList().then(response => {
       categoryList.value = ['全部', ...response.data]
     })
@@ -249,110 +258,93 @@ onMounted(() => {
   }
 
   .category-list {
-    margin-bottom: 12px;
+    display: flex;
+    margin-bottom: 15px;
+
+    .category-item {
+      margin-right: 10px;
+    }
   }
 
   .role-list-container {
     flex: 1;
     overflow: auto;
 
-    .role-cards {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: flex-start;
-      align-content: flex-start;
+    .role-grid {
+      display: grid;
       gap: 16px;
+      margin-bottom: 20px;
     }
 
     .role-card {
-      width: 320px;
-      border-radius: 10px;
-      position: relative;
+      margin-right: 15px;
+      height: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--el-border-color-light);
 
-      .more-actions {
-        position: absolute;
-        top: 0px;
-        right: 10px;
+      .card-header {
+        display: flex;
+        justify-content: flex-end;
+        padding: 12px 14px 0px 0px;
+
+        .more-btn {
+          cursor: pointer;
+        }
       }
 
-      .role-content-layout {
+      .card-body {
         display: flex;
-        flex-direction: row;
-        gap: 16px;
-        min-height: 105px;
+        gap: 14px;
+        padding: 0 14px 16px;
 
-        .role-left {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 10px;
-
-          .role-avatar {
-            width: 65px;
-            height: 65px;
-            flex-shrink: 0;
-          }
-
-          .role-basic-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-
-            .role-name {
-              font-size: 16px;
-              font-weight: bold;
-              color: var(--el-text-color-primary);
-              margin-bottom: 8px;
-            }
-
-            .role-description {
-              font-size: 14px;
-              color: var(--el-text-color-regular);
-              display: -webkit-box;
-              -webkit-line-clamp: 2;
-              line-clamp: 2;
-              -webkit-box-orient: vertical;
-              overflow: hidden;
-              text-overflow: ellipsis;
-            }
-          }
-        }
-
-        .role-right {
+        .role-info {
           flex: 1;
-          display: flex;
           flex-direction: column;
-          border-left: 1px solid var(--el-border-color-lighter);
-          padding-left: 16px;
 
-          .role-system-message-label {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--el-text-color-secondary);
-            margin-bottom: 8px;
+          .role-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
           }
 
-          .role-system-message {
-            height: 100%;
+          .role-desc {
             font-size: 13px;
-            color: var(--el-text-color-regular);
-            line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 5;
-            line-clamp: 5;
-            -webkit-box-orient: vertical;
+            color: var(--el-text-color-secondary);
+            line-height: 1.5;
             overflow: hidden;
             text-overflow: ellipsis;
-            cursor: pointer;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
           }
         }
       }
 
-      .role-actions {
+      .card-footer {
+        padding: 0 14px 12px;
+
+        .system-msg-label {
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--el-text-color-secondary);
+          margin-bottom: 6px;
+        }
+
+        .system-msg-content {
+          font-size: 13px;
+          color: var(--el-text-color-regular);
+          line-height: 1.6;
+          background: var(--el-fill-color-light);
+          padding: 10px 12px;
+          border-radius: 8px;
+        }
+      }
+
+      .card-actions {
+        padding: 5px 14px 14px;
         display: flex;
-        flex-direction: row-reverse;
-        margin-top: 12px;
+        justify-content: flex-end;
       }
     }
   }

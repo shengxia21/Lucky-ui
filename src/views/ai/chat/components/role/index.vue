@@ -1,19 +1,18 @@
-<!-- chat 角色仓库 -->
 <template>
   <el-container class="role-repo-container">
     <!-- 标签页 -->
     <el-tabs v-model="activeTab" @tab-click="handleTabsClick" class="role-tabs">
       <el-tab-pane label="我的角色" name="my-role" class="my-role-pane">
-        <RoleList ref="myRoleListRef" type="my" @on-use="handleRoleUse" />
+        <RoleList ref="myRoleListRef" role-type="my" @on-use="handleRoleUse" />
       </el-tab-pane>
       <el-tab-pane label="公共角色" name="public-role" class="public-role-pane">
-        <RoleList ref="publicRoleListRef" type="public" @on-use="handleRoleUse" />
+        <RoleList ref="publicRoleListRef" role-type="public" @on-use="handleRoleUse" />
       </el-tab-pane>
     </el-tabs>
   </el-container>
 </template>
 
-<script setup name="RoleRepository">
+<script setup name="ChatRole">
 import RoleList from './RoleList.vue'
 
 const emits = defineEmits(['onUseRole'])
@@ -26,12 +25,13 @@ const publicRoleListRef = ref()
 
 /** tabs 点击 */
 const handleTabsClick = (tab) => {
-  if (activeTab.value !== 'my-role' && tab.paneName == 'my-role') {
+  activeTab.value = tab.paneName
+  // 刷新角色列表
+  if (activeTab.value == 'my-role') {
     myRoleListRef.value.refresh()
-  } else if (activeTab.value !== 'public-role' && tab.paneName == 'public-role') {
+  } else if (activeTab.value == 'public-role') {
     publicRoleListRef.value.refresh()
   }
-  activeTab.value = tab.paneName
 }
 
 /** 角色使用回调 */
