@@ -22,11 +22,27 @@ import ChatAside from './components/Aside/index.vue'
 import ChatHeader from './components/Header/index.vue'
 import ChatMain from './components/Main/index.vue'
 import ChatFooter from './components/Footer/index.vue'
+import useSettingStore from '@/store/modules/settings'
+
+const settingStore = useSettingStore()
+
+const containerHeight = computed(() => {
+  const { tagsView, footerVisible } = settingStore
+
+  if (tagsView && footerVisible) {
+    return 'calc(100vh - 120px)'
+  } else if (!tagsView && footerVisible) {
+    return 'calc(100vh - 86px)'
+  } else if (tagsView && !footerVisible) {
+    return 'calc(100vh - 84px)'
+  }
+  return 'calc(100vh - 52px)'
+})
 </script>
 
 <style lang="scss" scoped>
 .window-container {
-  height: calc(100vh - 84px);
+  height: v-bind(containerHeight);
 
   .chat-container {
     height: 100%;
