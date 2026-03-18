@@ -156,12 +156,14 @@ import xml from 'highlight.js/lib/languages/xml'
 import html from 'highlight.js/lib/languages/xml'
 import vue from 'highlight.js/lib/languages/xml'
 import javascript from 'highlight.js/lib/languages/javascript'
+import typescript from 'highlight.js/lib/languages/typescript'
 import sql from 'highlight.js/lib/languages/sql'
 hljs.registerLanguage("java", java)
 hljs.registerLanguage("xml", xml)
 hljs.registerLanguage("html", html)
 hljs.registerLanguage("vue", vue)
 hljs.registerLanguage("javascript", javascript)
+hljs.registerLanguage("typescript", typescript)
 hljs.registerLanguage("sql", sql)
 
 const route = useRoute()
