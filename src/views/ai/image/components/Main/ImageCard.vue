@@ -79,8 +79,8 @@ const props = defineProps({
   }
 })
 
-watch(() => props.detail, (newVal, _oldVal) => {
-  handleLoading(newVal.status)
+watch(() => props.detail.status, (value) => {
+  handleLoading(value)
 })
 
 const emits = defineEmits(['onDeleteSuccess', 'onRegeneration'])

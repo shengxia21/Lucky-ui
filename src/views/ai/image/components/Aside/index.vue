@@ -41,7 +41,7 @@
 
       <!-- 尺寸选择 -->
       <el-form-item label="图片分辨率" prop="size">
-        <div class="size-buttons">
+        <div v-if="currentSizePresets.length > 0" class="size-buttons">
           <el-button
             v-for="size in currentSizePresets"
             :key="size.label"
@@ -50,6 +50,23 @@
           >
             {{ size.label }}
           </el-button>
+        </div>
+        <div v-else class="size-inputs">
+          <el-input
+            v-model="form.width"
+            type="number"
+            placeholder="宽度"
+            :min="1"
+            style="width: 150px;"
+          />
+          <span style="margin: 0 10px;">×</span>
+          <el-input
+            v-model="form.height"
+            type="number"
+            placeholder="高度"
+            :min="1"
+            style="width: 150px;"
+          />
         </div>
       </el-form-item>
 
@@ -94,6 +111,8 @@ const data = reactive({
     prompt: '',
     negativePrompt: '',
     size: '1328*1328',
+    width: '',
+    height: '',
     promptExtend: false
   },
   rules: {
@@ -118,25 +137,39 @@ const updateSizePresets = () => {
     const modelConfig = modelSizeMap[model.model]
     currentSizePresets.value = modelConfig.sizes
     showNegativePrompt.value = modelConfig.showNegativePrompt || false
+    // 存在尺寸选项,则使用第一个尺寸选项
+    if (currentSizePresets.value.length > 0) {
+      form.value.size = currentSizePresets.value[0].value
+    }
   } else {
-    // 否则,使用所有模型的尺寸选项
-    currentSizePresets.value = Object.values(modelSizeMap).flatMap(item => item.sizes)
+    // 如果没有匹配的尺寸选项,则清空尺寸选项
+    currentSizePresets.value = []
+    // 默认不展示负向提示词
     showNegativePrompt.value = false
+    // 清空 size,让用户手动输入
+    form.value.size = ''
   }
-  // 初始化图片分辨率为第一个选项
-  if (currentSizePresets.value.length > 0) {
-    form.value.size = currentSizePresets.value[0].value
-  }
+  form.value.width = ''
+  form.value.height = ''
 }
 
 /** 生成图片 */
 const handleGenerateImage = async () => {
+  // 如果没有尺寸选项,则校验宽度和高度是否为空
+  if (currentSizePresets.value.length === 0) {
+    if (!form.value.width || !form.value.height) {
+      proxy.$modal.msgError('请输入宽度和高度')
+      return
+    }
+    form.value.size = `${form.value.width}*${form.value.height}`
+  }
+
   await proxy.$modal.confirm('确认生成内容?')
   try {
     drawIn.value = true
     proxy.$modal.msg("正在生成,请稍后查看!")
 
-    const [width, height] = form.size.split('*').map(Number)
+    const [width, height] = form.value.size.split('*').map(Number)
     const requestData = {
       modelId: form.value.modelId,
       prompt: form.value.prompt,
@@ -152,6 +185,8 @@ const handleGenerateImage = async () => {
   } finally {
     form.value.prompt = ''
     form.value.negativePrompt = ''
+    form.value.width = ''
+    form.value.height = ''
     emits('onDrawComplete')
     drawIn.value = false
   }
@@ -165,7 +200,6 @@ onMounted(async() => {
   // 初始化模型ID为第一个模型
   if (models.value.length > 0) {
     form.value.modelId = models.value[0].id
-    updateSizePresets()
   }
 })
 </script>
