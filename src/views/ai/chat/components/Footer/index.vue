@@ -103,7 +103,9 @@ const handleStop = () => {
 
     .chat-textarea {
       width: 100%;
-      height: 60px;
+      min-height: 60px;
+      max-height: 240px;
+      field-sizing: content;
       border: none;
       outline: none;
       resize: none;
