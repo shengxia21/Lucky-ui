@@ -64,7 +64,8 @@ const toggleExpanded = () => {
 
 <style lang="scss" scoped>
 .reasoning-component {
-  margin-top: 10px;
+  margin-top: 8px;
+  margin-bottom: 12px;
 
   .reasoning-header {
     display: flex;
@@ -106,18 +107,16 @@ const toggleExpanded = () => {
   }
 
   .reasoning-content {
-    padding: 12px;
+    padding: 4px 10px;
     background-color: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(4px);
     border: 1px solid rgba(209, 213, 219, 0.6);
     border-top: 0;
     border-radius: 0 0 8px 8px;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   }
 
   .reasoning-markdown {
-    color: #374151;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
   }
 }

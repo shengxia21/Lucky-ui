@@ -201,7 +201,6 @@ onMounted(() => {
 .message-list-container {
   height: 100%;
   overflow-y: auto;
-  position: relative;
   
   .message-item-wrapper {
     display: flex;
@@ -231,17 +230,11 @@ onMounted(() => {
       }
       
       .message-bubble-left {
-        position: relative;
         display: flex;
         flex-direction: column;
-        word-break: break-word;
-        background-color: var(--el-fill-color-light);
         box-shadow: 0 0 0 1px var(--el-border-color-light);
         border-radius: 10px;
-        padding-top: 10px;
-        padding-left: 10px;
-        padding-right: 10px;
-        padding-bottom: 5px;
+        padding: 5px 10px;
       }
       
       .message-actions-left {
