@@ -41,6 +41,15 @@ export const getRouters = () => {
   })
 }
 
+// 解锁屏幕
+export function unlockScreen(password) {
+  return request({
+    url: '/unlockscreen',
+    method: 'post',
+    data: { password }
+  })
+}
+
 // 退出方法
 export function logout() {
   return request({
