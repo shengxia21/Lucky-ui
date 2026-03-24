@@ -21,7 +21,7 @@
             <el-button
               class="message-action-btn"
               link
-              v-copyText="item.content"
+              v-copyText="() => item.content"
               v-copyText:callback="copyTextSuccess"
             >
               <img class="message-action-icon" src="@/assets/images/ai/copy.svg" />
@@ -168,15 +168,14 @@ const copyTextSuccess = () => {
 }
 
 /** 删除 */
-const onDelete = (id) => {
+const onDelete = async (id) => {
   if (chatStore.conversationInProgress) {
     proxy.$modal.alert('回答中，不能删除!')
     return
   }
-  deleteChatMessage(id).then(() => {
-    proxy.$modal.msgSuccess('删除成功！')
-    chatStore.getMessageList()
-  })
+  await deleteChatMessage(id)
+  proxy.$modal.msgSuccess('删除成功！')
+  chatStore.deleteMessage(id)
 }
 
 /** 刷新 */

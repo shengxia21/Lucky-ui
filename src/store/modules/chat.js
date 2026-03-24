@@ -41,17 +41,9 @@ const useChatStore = defineStore(
           return [
             {
               id: 0,
-              conversationId: state.activeConversation.id || 0,
               type: 'system',
-              userId: '',
-              roleId: '',
-              model: 0,
-              modelId: 0,
               content: state.activeConversation.systemMessage,
-              tokens: 0,
-              createTime: new Date(),
-              roleAvatar: '',
-              userAvatar: ''
+              createTime: new Date()
             }
           ]
         }
@@ -89,6 +81,13 @@ const useChatStore = defineStore(
         this.activeConversationId = null
         this.activeConversation = null
         this.activeMessageList = []
+      },
+      // 删除消息列表中对应的消息
+      deleteMessage(id) {
+        const index = this.activeMessageList.findIndex((msg) => msg.id === id)
+        if (index !== -1) {
+          this.activeMessageList.splice(index, 1)
+        }
       },
       // 清空消息列表
       clearMessageList() {
@@ -128,7 +127,6 @@ const useChatStore = defineStore(
         // 1.1 先添加两个假数据，等 stream 返回再替换
         this.activeMessageList.push({
           id: -1,
-          conversationId: this.activeConversationId,
           type: 'user',
           content: content,
           attachmentUrls: attachmentUrls || [],
@@ -136,14 +134,13 @@ const useChatStore = defineStore(
         })
         this.activeMessageList.push({
           id: -2,
-          conversationId: this.activeConversationId,
           type: 'assistant',
           content: '思考中...',
           reasoningContent: '',
           createTime: new Date()
         })
         // 1.2 滚动到最下面
-        this.scrollToBottom()
+        this.scrollToBottom(true)
         // 1.3 开始动画
         this.startAnimation()
 
@@ -162,35 +159,35 @@ const useChatStore = defineStore(
 
             // 处理响应
             if (code !== 200) {
-              // 异常提示(后续修改为回调)
-              // proxy.$modal.alert(`对话异常! ${msg}`)
-              // 如果未接收到消息，则进行删除
-              if (this.receiveMessageFullText === '') {
-                this.activeMessageList.pop()
-              }
+              // 将异常信息显示在 assistant 消息中(有些操作可能是用户配置问题导致的)
+              this.activeMessageList[this.activeMessageList.length - 1].content = msg
               return
             }
 
             // 首次返回需要添加一个 message 到页面，后面的都是更新
             if (isFirstChunk) {
               isFirstChunk = false
-              // 弹出两个假数据
-              this.activeMessageList.pop()
-              this.activeMessageList.pop()
-              // 更新返回的数据
-              this.activeMessageList.push(data.send)
-              data.send.attachmentUrls = attachmentUrls
-              this.activeMessageList.push(data.receive)
+              const userMessage = this.activeMessageList[this.activeMessageList.length - 2]
+              // 替换 user 消息内容
+              userMessage.id = data.sendId
+              userMessage.content = data.sendContent
+              userMessage.createTime = data.sendTime
+              // 替换 assistant 消息内容
+              const assistantMessage = this.activeMessageList[this.activeMessageList.length - 1]
+              assistantMessage.id = data.id
+              assistantMessage.content = data.content
+              assistantMessage.reasoningContent = data.reasoningContent
+              assistantMessage.createTime = data.createTime
             }
 
             // 处理 reasoningContent
-            if (data.receive.reasoningContent) {
-              this.receiveMessageFullReasoningText = this.receiveMessageFullReasoningText + data.receive.reasoningContent
+            if (data.reasoningContent) {
+              this.receiveMessageFullReasoningText = this.receiveMessageFullReasoningText + data.reasoningContent
             }
 
             // 处理输出文本内容
-            if (data.receive.content) {
-              this.receiveMessageFullText = this.receiveMessageFullText + data.receive.content
+            if (data.content) {
+              this.receiveMessageFullText = this.receiveMessageFullText + data.content
             }
           },
           (error) => {
@@ -254,10 +251,10 @@ const useChatStore = defineStore(
           }
         }
 
-        // 更新最后一条消息内容
+        // 更新assistant消息，也就是最后一条消息的内容
         const updateLastMessageContent = () => {
           const lastMessage = this.activeMessageList[this.activeMessageList.length - 1]
-          if (lastMessage) {
+          if (lastMessage && lastMessage.type === 'assistant') {
             lastMessage.content = this.receiveMessageDisplayedText
             lastMessage.reasoningContent = this.receiveMessageDisplayedReasoningText
             // 滚动到最下面
