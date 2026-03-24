@@ -8,9 +8,11 @@ export default {
     } else {
       el.$copyValue = value
       const handler = () => {
-        copyTextToClipboard(el.$copyValue)
+        // 支持函数类型，调用函数获取最新值
+        const copyValue = typeof el.$copyValue === 'function' ? el.$copyValue() : el.$copyValue
+        copyTextToClipboard(copyValue)
         if (el.$copyCallback) {
-          el.$copyCallback(el.$copyValue)
+          el.$copyCallback(copyValue)
         }
       }
       el.addEventListener("click", handler)
