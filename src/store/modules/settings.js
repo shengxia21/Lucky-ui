@@ -26,7 +26,8 @@ const useSettingsStore = defineStore(
       dynamicTitle: storageSetting.dynamicTitle === undefined ? dynamicTitle : storageSetting.dynamicTitle,
       footerVisible: storageSetting.footerVisible === undefined ? footerVisible : storageSetting.footerVisible,
       footerContent: footerContent,
-      isDark: isDark.value
+      isDark: isDark.value,
+      isFullscreen: false
     }),
     actions: {
       // 修改布局设置
@@ -45,6 +46,10 @@ const useSettingsStore = defineStore(
       toggleTheme() {
         this.isDark = !this.isDark
         toggleDark()
+      },
+      // 设置全屏状态
+      setFullscreen(value) {
+        this.isFullscreen = value
       }
     }
   })

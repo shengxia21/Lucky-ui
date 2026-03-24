@@ -239,6 +239,8 @@ function toggleFullscreen() {
     const appMain = document.querySelector('.app-main')
     if (appMain) {
       appMain.requestFullscreen()
+      // 设置全屏状态为 true
+      settingsStore.setFullscreen(true)
     }
   } else {
     document.exitFullscreen()
@@ -247,6 +249,10 @@ function toggleFullscreen() {
 
 function onFullscreenChange() {
   isFullscreen.value = !!document.fullscreenElement
+  // 设置全屏状态
+  if (!isFullscreen.value && settingsStore.isFullscreen) {
+    settingsStore.setFullscreen(false)
+  }
   const appMain = document.querySelector('.app-main')
   if (appMain && !settingsStore.isDark) {
     appMain.style.backgroundColor = document.fullscreenElement ? '#fff' : ''

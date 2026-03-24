@@ -27,7 +27,14 @@ import useSettingStore from '@/store/modules/settings'
 const settingStore = useSettingStore()
 
 const containerHeight = computed(() => {
-  const { tagsView, footerVisible } = settingStore
+  const { tagsView, footerVisible, isFullscreen } = settingStore
+
+  // 全屏状态下的高度
+  if (isFullscreen && footerVisible) {
+    return 'calc(100vh - 36px)'
+  } else if (isFullscreen) {
+    return '100vh'
+  }
 
   if (tagsView && footerVisible) {
     return 'calc(100vh - 120px)'
