@@ -1,6 +1,6 @@
 <template>
   <div class="common-form">
-    <el-form :model="form" :rules="rules" label-position="top" require-asterisk-position="right">
+    <el-form ref="formRef" :model="form" :rules="rules" label-position="top" require-asterisk-position="right">
       <!-- 模型选择 -->
       <el-form-item label="生成模型" prop="modelId">
         <el-select v-model="form.modelId" placeholder="请选择生成图片模型">
@@ -83,7 +83,7 @@
           round
           :loading="drawIn"
           :disabled="form.prompt.length === 0"
-          @click="handleGenerateImage"
+          @click="validateForm"
           style="width: 100%;"
         >
           {{ drawIn ? '生成中' : '生成内容' }}
@@ -153,8 +153,9 @@ const updateSizePresets = () => {
   form.value.height = ''
 }
 
-/** 生成图片 */
-const handleGenerateImage = async () => {
+// 校验表单参数
+const validateForm = async () => {
+  await proxy.$refs["formRef"].validate()
   // 如果没有尺寸选项,则校验宽度和高度是否为空
   if (currentSizePresets.value.length === 0) {
     if (!form.value.width || !form.value.height) {
@@ -163,8 +164,12 @@ const handleGenerateImage = async () => {
     }
     form.value.size = `${form.value.width}*${form.value.height}`
   }
-
   await proxy.$modal.confirm('确认生成内容?')
+  await generateImage()
+}
+
+/** 生成图片 */
+const generateImage = async () => {
   try {
     drawIn.value = true
     proxy.$modal.msg("正在生成,请稍后查看!")
@@ -180,14 +185,13 @@ const handleGenerateImage = async () => {
         promptExtend: form.value.promptExtend
       }
     }
-
     await drawImage(requestData)
-  } finally {
     form.value.prompt = ''
     form.value.negativePrompt = ''
     form.value.width = ''
     form.value.height = ''
     emits('onDrawComplete')
+  } finally {
     drawIn.value = false
   }
 }
