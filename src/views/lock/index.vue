@@ -37,7 +37,7 @@
 import { useRouter } from 'vue-router'
 import useUserStore from '@/store/modules/user'
 import useLockStore from '@/store/modules/lock'
-import { unlockScreen } from '@/api/login'
+import { unlockScreen } from '@/api/authentication/login'
 import defAva from '@/assets/images/profile.jpg'
 
 const router = useRouter()
