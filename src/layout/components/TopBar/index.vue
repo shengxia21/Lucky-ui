@@ -96,4 +96,9 @@ onMounted(() => {
 .topbar-menu.el-menu--horizontal .el-sub-menu__title, .topbar-menu.el-menu--horizontal .el-menu-item {
   height: 60px;
 }
+
+/* sub-menu item icon */
+.topbar-menu.el-menu--horizontal .el-sub-menu > .el-sub-menu__title > .svg-icon {
+  margin-left: 0 !important;
+}
 </style>
