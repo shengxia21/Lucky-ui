@@ -84,10 +84,10 @@
     </div>
 
     <!-- 角色仓库抽屉 -->
-    <RoleDrawer ref="roleDrawerRef" @onUseRole="handleRoleUse" />
+    <role-drawer ref="roleDrawerRef" @onUseRole="handleRoleUse" />
 
     <!-- 更新对话 Form -->
-    <ConversationUpdateForm
+    <conversation-update-form
       ref="conversationUpdateFormRef"
       @success="refreshConversationList"
     />

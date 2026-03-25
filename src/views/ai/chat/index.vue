@@ -1,18 +1,18 @@
 <template>
   <el-container class="window-container">
     <!-- 左侧：对话列表 -->
-    <ChatAside />
+    <chat-aside />
 
     <!-- 右侧：对话详情 -->
     <div class="chat-container">
       <!-- header：对话详情头 -->
-      <ChatHeader />
+      <chat-header />
 
       <!-- main：消息列表 -->
-      <ChatMain />
+      <chat-main />
 
       <!-- footer：消息发送区域 -->
-      <ChatFooter />
+      <chat-footer />
     </div>
   </el-container>
 </template>

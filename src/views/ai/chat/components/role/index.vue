@@ -4,10 +4,10 @@
       <!-- 标签页 -->
       <el-tabs v-model="activeTab" @tab-click="handleTabsClick" class="role-tabs">
         <el-tab-pane label="我的角色" name="my-role" class="my-role-pane">
-          <RoleList ref="myRoleListRef" role-type="my" @on-use="handleRoleUse" />
+          <role-list ref="myRoleListRef" role-type="my" @on-use="handleRoleUse" />
         </el-tab-pane>
         <el-tab-pane label="公共角色" name="public-role" class="public-role-pane">
-          <RoleList ref="publicRoleListRef" role-type="public" @on-use="handleRoleUse" />
+          <role-list ref="publicRoleListRef" role-type="public" @on-use="handleRoleUse" />
         </el-tab-pane>
       </el-tabs>
     </el-container>

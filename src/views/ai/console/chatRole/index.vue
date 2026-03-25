@@ -97,7 +97,7 @@
     />
 
     <!-- 表单弹窗：添加/修改 -->
-    <ChatRoleForm ref="formRef" @success="getList" />
+    <chat-role-form ref="formRef" @success="getList" />
   </div>
 </template>
 

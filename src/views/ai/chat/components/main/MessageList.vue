@@ -11,11 +11,14 @@
             <el-text class="message-time">{{ parseTime(item.createTime) }}</el-text>
           </div>
           <div class="message-bubble-left" ref="markdownViewRef">
-            <MessageReasoning
+            <message-reasoning
               :reasoning-content="item.reasoningContent || ''"
               :content="item.content || ''"
             />
-            <MarkdownView :content="item.content" />
+            <markdown-it
+              v-if="item.content"
+              :content="item.content"
+            />
           </div>
           <div class="message-actions-left">
             <el-button
@@ -94,7 +97,7 @@
 </template>
 
 <script setup>
-import MarkdownView from '@/components/MarkdownView/index.vue'
+import MarkdownIt from '@/components/MarkdownIt/index.vue'
 import MessageReasoning from './MessageReasoning.vue'
 import { deleteChatMessage } from '@/api/ai/chat/message'
 import useUserStore from '@/store/modules/user'

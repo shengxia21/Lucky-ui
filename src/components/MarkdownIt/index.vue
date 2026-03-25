@@ -1,5 +1,5 @@
 <template>
-  <div class="markdown-view" v-html="renderedMarkdown"></div>
+  <div class="markdown-it" v-html="renderedMarkdown"></div>
 </template>
 
 <script setup>
@@ -56,7 +56,7 @@ const renderedMarkdown = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.markdown-view {
+.markdown-it {
   font-size: 0.95rem;
   line-height: 1.4rem;
   color: var(--el-text-color-primary);

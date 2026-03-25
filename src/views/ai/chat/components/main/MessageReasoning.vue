@@ -15,8 +15,7 @@
 
     <!-- 推理内容区域 -->
     <div v-show="isExpanded" class="reasoning-content">
-      <MarkdownView
-        v-if="props.reasoningContent"
+      <markdown-it
         class="reasoning-markdown"
         :content="props.reasoningContent"
       />
@@ -25,7 +24,7 @@
 </template>
 
 <script setup>
-import MarkdownView from '@/components/MarkdownView/index.vue'
+import MarkdownIt from '@/components/MarkdownIt/index.vue'
 
 // 定义 props
 const props = defineProps({
