@@ -9,7 +9,7 @@
   </el-main>
 </template>
 
-<script setup name="ChatMain">
+<script setup>
 import useChatStore from '@/store/modules/chat'
 import MessageLoading from './MessageLoading.vue'
 import MessageList from './MessageList.vue'

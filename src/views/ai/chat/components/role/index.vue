@@ -14,7 +14,7 @@
   </el-drawer>
 </template>
 
-<script setup name="ChatRole">
+<script setup>
 import RoleList from './RoleList.vue'
 
 const emits = defineEmits(['onUseRole'])

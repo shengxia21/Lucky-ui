@@ -64,7 +64,7 @@
   </el-card>
 </template>
 
-<script setup name="ImageCard">
+<script setup>
 import ImageDetail from './ImageDetail.vue'
 import { Delete, Download, More, RefreshRight } from '@element-plus/icons-vue'
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'

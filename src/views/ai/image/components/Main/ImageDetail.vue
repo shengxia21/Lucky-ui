@@ -36,7 +36,7 @@
   </el-drawer>
 </template>
 
-<script setup name="ImageDetail">
+<script setup>
 import { getImageMy } from '@/api/ai/image'
 
 const showDrawer = ref(false)

@@ -93,7 +93,7 @@
   </div>
 </template>
 
-<script setup name="MessageList">
+<script setup>
 import MarkdownView from '@/components/MarkdownView/index.vue'
 import MessageReasoning from './MessageReasoning.vue'
 import { deleteChatMessage } from '@/api/ai/chat/message'

@@ -2,7 +2,7 @@
   <div class="markdown-view" v-html="renderedMarkdown"></div>
 </template>
 
-<script setup name="MarkdownView">
+<script setup>
 import { useClipboard } from '@vueuse/core'
 import MarkdownIt from 'markdown-it'
 import hljs from 'highlight.js'

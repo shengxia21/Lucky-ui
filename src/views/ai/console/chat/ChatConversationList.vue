@@ -78,7 +78,7 @@
   />
 </template>
 
-<script setup name="Conversation">
+<script setup>
 import { listConversation, delConversation } from "@/api/ai/console/chat/conversation"
 import { optionselect as getUserOptionselect } from "@/api/system/user"
 

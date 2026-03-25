@@ -34,7 +34,7 @@
   </el-card>
 </template>
 
-<script setup name="ImageMain">
+<script setup>
 import { getMyImagePage, getImageListMyByIds } from '@/api/ai/image'
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'
 import ImageCard from './ImageCard.vue'
@@ -59,7 +59,6 @@ const getImageList = async () => {
     const response = await getMyImagePage(queryParams)
     imageList.value = response.rows
     total.value = response.total
-
     // 2. 计算需要轮询的图片
     const waitImages = {}
     imageList.value.forEach((item) => {
@@ -68,7 +67,7 @@ const getImageList = async () => {
       }
     })
     inProgressImageMap.value = waitImages
-
+    // 3. 启动轮询
     if (Object.keys(waitImages).length > 0) {
       startPolling()
     }

@@ -27,7 +27,7 @@
   </el-header>
 </template>
 
-<script setup name="ChatHeader">
+<script setup>
 import useChatStore from '@/store/modules/chat'
 import { deleteChatMessageByConversationId } from '@/api/ai/chat/message'
 import { Delete, Top } from '@element-plus/icons-vue'

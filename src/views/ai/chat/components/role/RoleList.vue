@@ -112,7 +112,7 @@
   </div>
 </template>
 
-<script setup name="RoleList">
+<script setup>
 import ChatRoleForm from '@/views/ai/console/chatRole/ChatRoleForm.vue'
 import { listMyRole, getCategoryList, delMyRole } from '@/api/ai/console/chatRole'
 import { Search } from '@element-plus/icons-vue'

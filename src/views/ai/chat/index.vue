@@ -17,7 +17,7 @@
   </el-container>
 </template>
 
-<script setup name="AiChat">
+<script setup name="Chat">
 import ChatAside from './components/Aside/index.vue'
 import ChatHeader from './components/Header/index.vue'
 import ChatMain from './components/Main/index.vue'

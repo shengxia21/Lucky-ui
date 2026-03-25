@@ -94,7 +94,7 @@
   </el-aside>
 </template>
 
-<script setup name="ChatAside">
+<script setup>
 import { getChatConversationMyList, createChatConversationMy,
   updateChatConversationMy, deleteChatConversationMy,
   deleteChatConversationMyByUnpinned } from '@/api/ai/chat/conversation'
@@ -168,7 +168,6 @@ const getChatConversationList = async () => {
   try {
     // 加载中
     loading.value = true
-
     // 1.1 获取对话数据
     const { data: conversationListData } = await getChatConversationMyList()
     conversationList.value = conversationListData.map(item => {
@@ -187,7 +186,6 @@ const getChatConversationList = async () => {
       conversationMap.value = {}
       return
     }
-
     // 2. 对话根据时间分组(置顶、今天、一天前、三天前、七天前、30 天前)
     conversationMap.value = getConversationGroupByCreateTime(conversationList.value)
   } finally {

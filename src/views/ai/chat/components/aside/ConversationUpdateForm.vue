@@ -64,7 +64,7 @@
   </el-dialog>
 </template>
 
-<script setup name="ChatConversationUpdateForm">
+<script setup>
 import { getModelSimpleList } from '@/api/ai/console/model'
 import { getChatConversationMy, updateChatConversationMy } from '@/api/ai/chat/conversation'
 import { AiModelTypeEnum } from '@/utils/constants/aiConstant'

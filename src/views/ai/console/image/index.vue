@@ -128,7 +128,7 @@
   </div>
 </template>
 
-<script setup name="Image">
+<script setup name="ImageManager">
 import { listImage, updateImage, delImage } from "@/api/ai/console/image"
 import { optionselect as getUserOptionselect } from "@/api/system/user"
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'

@@ -85,7 +85,7 @@
   </el-dialog>
 </template>
 
-<script setup name="ChatRoleForm">
+<script setup>
 import { getRole, addRole, updateRole, addMyRole, updateMyRole } from "@/api/ai/console/chatRole"
 import { getModelSimpleList } from "@/api/ai/console/model"
 import { AiModelTypeEnum } from '@/utils/constants/aiConstant'

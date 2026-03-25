@@ -38,7 +38,7 @@
   </el-footer>
 </template>
 
-<script setup name="ChatFooter">
+<script setup>
 import useChatStore from '@/store/modules/chat'
 
 const { proxy } = getCurrentInstance()

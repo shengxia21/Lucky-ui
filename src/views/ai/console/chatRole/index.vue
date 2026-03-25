@@ -101,7 +101,7 @@
   </div>
 </template>
 
-<script setup name="chatRole">
+<script setup name="ChatRole">
 import { listRole, delRole } from "@/api/ai/console/chatRole"
 import ChatRoleForm from './ChatRoleForm.vue'
 

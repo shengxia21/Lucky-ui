@@ -93,7 +93,7 @@
   </div>
 </template>
 
-<script setup name="ImageAside">
+<script setup>
 import { getModelSimpleList } from '@/api/ai/console/model'
 import { AiModelTypeEnum, modelSizeMap } from '@/utils/constants/aiConstant'
 import { drawImage } from '@/api/ai/image'

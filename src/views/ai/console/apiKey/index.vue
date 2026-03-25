@@ -120,7 +120,7 @@
   </div>
 </template>
 
-<script setup name="Key">
+<script setup name="Api-key">
 import { listKey, getKey, delKey, addKey, updateKey } from "@/api/ai/console/apiKey"
 
 const { proxy } = getCurrentInstance()

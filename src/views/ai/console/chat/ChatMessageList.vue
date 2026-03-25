@@ -82,7 +82,7 @@
   />
 </template>
 
-<script setup name="Message">
+<script setup>
 import { listMessage, delMessage } from "@/api/ai/console/chat/message"
 import { optionselect as getUserOptionselect } from "@/api/system/user"
 

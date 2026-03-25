@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script setup name="MessageReasoning">
+<script setup>
 import MarkdownView from '@/components/MarkdownView/index.vue'
 
 // 定义 props
