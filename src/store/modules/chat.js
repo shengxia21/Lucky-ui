@@ -21,7 +21,7 @@ const useChatStore = defineStore('chat',{
     // 发送消息输入框相关
     prompt: '',
     enableContext: true,
-    enableWebSearch: false,
+    enableSearch: false,
     uploadFiles: [],
     isComposing: false,
 
@@ -124,14 +124,12 @@ const useChatStore = defineStore('chat',{
 
       // 1.1 先添加两个假数据，等 stream 返回再替换
       this.activeMessageList.push({
-        id: -1,
         type: 'user',
         content: content,
         attachmentUrls: attachmentUrls || [],
         createTime: new Date()
       })
       this.activeMessageList.push({
-        id: -2,
         type: 'assistant',
         content: '思考中...',
         reasoningContent: '',
@@ -142,50 +140,24 @@ const useChatStore = defineStore('chat',{
       // 1.3 开始动画
       this.startAnimation()
 
-      // 是否是第一个 chunk 消息段
-      let isFirstChunk = true
       // 2. 发送 event stream 请求
       await sendChatMessageStream(
         this.activeConversationId,
         content,
         this.enableContext,
-        this.enableWebSearch,
+        this.enableSearch,
         attachmentUrls || [],
         this.conversationInAbortController,
         async (response) => {
-          const { code, data, msg } = JSON.parse(response.data)
+          const { content, reasoningContent } = JSON.parse(response.data)
 
-          // 处理响应
-          if (code !== 200) {
-            // 将异常信息显示在 assistant 消息中(有些操作可能是用户配置问题导致的)
-            this.activeMessageList[this.activeMessageList.length - 1].content = msg
-            return
+          // 处理思考内容
+          if (reasoningContent) {
+            this.receiveMessageFullReasoningText = this.receiveMessageFullReasoningText + reasoningContent
           }
-
-          // 首次返回需要添加一个 message 到页面，后面的都是更新
-          if (isFirstChunk) {
-            isFirstChunk = false
-            const userMessage = this.activeMessageList[this.activeMessageList.length - 2]
-            // 替换 user 消息内容
-            userMessage.id = data.sendId
-            userMessage.content = data.sendContent
-            userMessage.createTime = data.sendTime
-            // 替换 assistant 消息内容
-            const assistantMessage = this.activeMessageList[this.activeMessageList.length - 1]
-            assistantMessage.id = data.id
-            assistantMessage.content = data.content
-            assistantMessage.reasoningContent = data.reasoningContent
-            assistantMessage.createTime = data.createTime
-          }
-
-          // 处理 reasoningContent
-          if (data.reasoningContent) {
-            this.receiveMessageFullReasoningText = this.receiveMessageFullReasoningText + data.reasoningContent
-          }
-
-          // 处理输出文本内容
-          if (data.content) {
-            this.receiveMessageFullText = this.receiveMessageFullText + data.content
+          // 处理输出内容
+          if (content) {
+            this.receiveMessageFullText = this.receiveMessageFullText + content
           }
         },
         (error) => {
