@@ -15,6 +15,8 @@
         <div class="chat-controls-left">
           <el-switch v-model="chatStore.enableContext" />
           <span class="context-label">上下文</span>
+          <el-switch v-model="chatStore.enableSearch" />
+          <span class="search-label">联网搜索</span>
         </div>
         <el-button
           type="primary"
