@@ -65,6 +65,7 @@
               <img class="message-action-icon" src="@/assets/images/ai/copy.svg" />
             </el-button>
             <el-button
+              v-if="item.id > 0"
               class="message-action-btn"
               link
               @click="onDelete(item.id)"
