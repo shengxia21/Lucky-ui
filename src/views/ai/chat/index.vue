@@ -31,9 +31,9 @@ const containerHeight = computed(() => {
 
   // 全屏状态下的高度
   if (isFullscreen && footerVisible) {
-    return 'calc(100vh - 36px)'
+    return 'calc(100vh - 70px)'
   } else if (isFullscreen) {
-    return '100vh'
+    return 'calc(100vh - 34px)'
   }
 
   if (tagsView && footerVisible) {
