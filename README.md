@@ -10,18 +10,20 @@
 
 ### 在线演示
 
-|   平台   | 地址                                             | 账号 |
+|   平台   | 地址  | 账号 |
 |:------:|------------------------------------------------|---|
-|  用户端   | 待实现                                            | admin / admin123 |
+|  用户端   | 待实现  | admin / admin123 |
 | 管理后台 | [www.lucky.com](http://121.40.230.117/login) | admin / admin123 |
 
 ### 项目源码
 
-| 项目模块     | Gitee 仓库                                             |
-|----------|------------------------------------------------------|
-| 🔧 后端服务  | [lucky-vue](https://gitee.com/fushengxuyu/lucky-vue) |
-| 🎨 用户前端  | 待实现                                                  |
-| 🛠️ 管理后台 | [lucky-ui](https://gitee.com/fushengxuyu/lucky-ui)   |
+### 项目源码
+
+| 项目模块     | GitHub 仓库 | Gitee 仓库 | GitCode 仓库 |
+|----------|----------------------------------------------------|------------------------------------------------------|--------------------------------------------------------|
+| 🔧 后端服务  | [lucky-vue](https://github.com/shengxia21/Lucky-Vue.git)   | [lucky-vue](https://gitee.com/fushengxuyu/lucky-vue.git) | [lucky-vue](https://gitcode.com/qq_56585325/lucky-vue.git) |
+| 🎨 用户前端  | 待实现  | 待实现  | 待实现 |
+| 🛠️ 管理后台 | [lucky-ui](https://github.com/shengxia21/Lucky-ui.git) | [lucky-ui](https://gitee.com/fushengxuyu/lucky-ui.git) | [lucky-ui](https://gitcode.com/qq_56585325/lucky-ui.git) |
 
 ## 环境要求
 
@@ -48,6 +50,18 @@ pnpm run dev
 # 前端访问地址 http://localhost:82
 ```
 
+## 🤝 参与贡献
+
+热烈欢迎社区贡献！无论您是资深开发者还是初学者，都可以为项目贡献力量 💪
+
+### 贡献方式
+
+1. **Fork** 项目到您的账户
+2. **创建分支** (`git checkout -b feature/新功能名称`)
+3. **提交代码** (`git commit -m '添加某某功能'`)
+4. **推送分支** (`git push origin feature/新功能名称`)
+5. **发起 Pull Request**
+
 ## 演示图
 
 <table>
@@ -72,18 +86,6 @@ pnpm run dev
         <td><img src=".image/模型配置.png"/></td>
     </tr>
 </table>
-
-## 🤝 参与贡献
-
-热烈欢迎社区贡献！无论您是资深开发者还是初学者，都可以为项目贡献力量 💪
-
-### 贡献方式
-
-1. **Fork** 项目到您的账户
-2. **创建分支** (`git checkout -b feature/新功能名称`)
-3. **提交代码** (`git commit -m '添加某某功能'`)
-4. **推送分支** (`git push origin feature/新功能名称`)
-5. **发起 Pull Request**
 
 ## 🙏 特别鸣谢
 
