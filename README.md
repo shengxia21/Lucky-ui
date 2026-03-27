@@ -17,8 +17,6 @@
 
 ### 项目源码
 
-### 项目源码
-
 | 项目模块     | GitHub 仓库 | Gitee 仓库 | GitCode 仓库 |
 |----------|----------------------------------------------------|------------------------------------------------------|--------------------------------------------------------|
 | 🔧 后端服务  | [lucky-vue](https://github.com/shengxia21/Lucky-Vue.git)   | [lucky-vue](https://gitee.com/fushengxuyu/lucky-vue.git) | [lucky-vue](https://gitcode.com/qq_56585325/lucky-vue.git) |
