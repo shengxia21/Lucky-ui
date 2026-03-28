@@ -83,7 +83,7 @@
                icon="Delete"
                :disabled="multiple"
                @click="handleDelete"
-               v-hasPermi="['monitor:operlog:remove']"
+               v-hasPermi="['monitor:operLog:remove']"
             >删除</el-button>
          </el-col>
          <el-col :span="1.5">
@@ -92,7 +92,7 @@
                plain
                icon="Delete"
                @click="handleClean"
-               v-hasPermi="['monitor:operlog:remove']"
+               v-hasPermi="['monitor:operLog:remove']"
             >清空</el-button>
          </el-col>
          <el-col :span="1.5">
@@ -101,13 +101,13 @@
                plain
                icon="Download"
                @click="handleExport"
-               v-hasPermi="['monitor:operlog:export']"
+               v-hasPermi="['monitor:operLog:export']"
             >导出</el-button>
          </el-col>
          <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
-      <el-table ref="operlogRef" v-loading="loading" :data="operlogList" @selection-change="handleSelectionChange" :default-sort="defaultSort" @sort-change="handleSortChange">
+      <el-table ref="operLogRef" v-loading="loading" :data="operLogList" @selection-change="handleSelectionChange" :default-sort="defaultSort" @sort-change="handleSortChange">
          <el-table-column type="selection" width="50" align="center" />
          <el-table-column label="日志编号" align="center" prop="operId" />
          <el-table-column label="系统模块" align="center" prop="title" :show-overflow-tooltip="true" />
@@ -135,7 +135,7 @@
          </el-table-column>
          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template #default="scope">
-               <el-button link type="primary" icon="View" @click="handleDetail(scope.row, scope.index)" v-hasPermi="['monitor:operlog:query']">详细</el-button>
+               <el-button link type="primary" icon="View" @click="handleDetail(scope.row, scope.index)" v-hasPermi="['monitor:operLog:query']">详细</el-button>
             </template>
          </el-table-column>
       </el-table>
@@ -148,18 +148,18 @@
          @pagination="getList"
       />
 
-      <operlog-detail v-model:visible="detailVisible" :row="detailRow" />
+      <operLog-detail v-model:visible="detailVisible" :row="detailRow" />
    </div>
 </template>
 
-<script setup name="Operlog">
-import OperlogDetail from './detail'
-import { list, delOperlog, cleanOperlog } from "@/api/monitor/operlog"
+<script setup name="OperLog">
+import OperLogDetail from './detail'
+import { list, delOperLog, cleanOperLog } from "@/api/monitor/operLog"
 
 const { proxy } = getCurrentInstance()
 const { sys_oper_type, sys_common_status } = proxy.useDict("sys_oper_type", "sys_common_status")
 
-const operlogList = ref([])
+const operLogList = ref([])
 const detailVisible = ref(false)
 const loading = ref(true)
 const detailRow = ref({})
@@ -191,7 +191,7 @@ const { queryParams, form } = toRefs(data)
 function getList() {
   loading.value = true
   list(proxy.addDateRange(queryParams.value, dateRange.value)).then(response => {
-    operlogList.value = response.rows
+    operLogList.value = response.rows
     total.value = response.total
     loading.value = false
   })
@@ -208,7 +208,7 @@ function resetQuery() {
   dateRange.value = []
   proxy.resetForm("queryRef")
   queryParams.value.pageNum = 1
-  proxy.$refs["operlogRef"].sort(defaultSort.value.prop, defaultSort.value.order)
+  proxy.$refs["operLogRef"].sort(defaultSort.value.prop, defaultSort.value.order)
 }
 
 /** 多选框选中数据 */
@@ -234,7 +234,7 @@ function handleDetail(row) {
 function handleDelete(row) {
   const operIds = row.operId || ids.value
   proxy.$modal.confirm('是否确认删除日志编号为"' + operIds + '"的数据项?').then(function () {
-    return delOperlog(operIds)
+    return delOperLog(operIds)
   }).then(() => {
     getList()
     proxy.$modal.msgSuccess("删除成功")
@@ -244,7 +244,7 @@ function handleDelete(row) {
 /** 清空按钮操作 */
 function handleClean() {
   proxy.$modal.confirm("是否确认清空所有操作日志数据项?").then(function () {
-    return cleanOperlog()
+    return cleanOperLog()
   }).then(() => {
     getList()
     proxy.$modal.msgSuccess("清空成功")
@@ -253,7 +253,7 @@ function handleClean() {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("monitor/operlog/export",{
+  proxy.download("monitor/operLog/export",{
     ...queryParams.value,
   }, `config_${new Date().getTime()}.xlsx`)
 }

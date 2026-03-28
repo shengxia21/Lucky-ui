@@ -112,6 +112,8 @@
 </template>
 
 <script setup>
+import { CopyDocument } from '@element-plus/icons-vue'
+
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
@@ -140,7 +142,7 @@ function formatJson(str) {
 function copyText(str) {
   const text = formatJson(str)
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(text).then(() => ElMessage({ message: '已复制', type: 'success', duration: 1500 }))
+    navigator.clipboard.writeText(text).then(() => proxy.$modal.msgSuccess({ message: '已复制', type: 'success', duration: 1500 }))
   } else {
     const ta = document.createElement('textarea')
     ta.value = text
@@ -148,7 +150,7 @@ function copyText(str) {
     ta.select()
     document.execCommand('copy')
     document.body.removeChild(ta)
-    ElMessage({ message: '已复制', type: 'success', duration: 1500 })
+    proxy.$modal.msgSuccess({ message: '已复制', type: 'success', duration: 1500 })
   }
 }
 </script>
