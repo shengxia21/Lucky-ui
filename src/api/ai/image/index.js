@@ -10,7 +10,7 @@ export function drawImage(data) {
 }
 
 // 获取【我的】绘图分页
-export function getMyImagePage(query) {
+export function getImagePageMy(query) {
   return request({
     url: '/ai/image/my-page',
     method: 'get',

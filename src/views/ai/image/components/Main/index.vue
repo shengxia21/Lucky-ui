@@ -35,7 +35,7 @@
 </template>
 
 <script setup>
-import { getMyImagePage, getImageListMyByIds } from '@/api/ai/image'
+import { getImagePageMy, getImageListMyByIds } from '@/api/ai/image'
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'
 import ImageCard from './ImageCard.vue'
 
@@ -56,7 +56,7 @@ const getImageList = async () => {
   try {
     // 1. 加载图片列表
     loading.value = true
-    const response = await getMyImagePage(queryParams)
+    const response = await getImagePageMy(queryParams)
     imageList.value = response.rows
     total.value = response.total
     // 2. 计算需要轮询的图片
