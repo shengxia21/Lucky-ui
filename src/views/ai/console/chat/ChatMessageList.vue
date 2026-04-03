@@ -68,7 +68,7 @@
     </el-table-column>
     <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="140" fixed="right">
       <template #default="scope">
-        <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['ai:message:delete']">删除</el-button>
+        <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['ai:chat-message:delete']">删除</el-button>
       </template>
     </el-table-column>
   </el-table>
