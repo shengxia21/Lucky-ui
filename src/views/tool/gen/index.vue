@@ -102,7 +102,7 @@
             <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['tool:gen:remove']"></el-button>
           </el-tooltip>
           <el-tooltip content="同步" placement="top">
-            <el-button link type="primary" icon="Refresh" @click="handleSynchDb(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
+            <el-button link type="primary" icon="Refresh" @click="handleSyncDb(scope.row)" v-hasPermi="['tool:gen:edit']"></el-button>
           </el-tooltip>
           <el-tooltip content="生成代码" placement="top">
             <el-button link type="primary" icon="Download" @click="handleGenTable(scope.row)" v-hasPermi="['tool:gen:code']"></el-button>
@@ -136,7 +136,7 @@
 </template>
 
 <script setup name="Gen">
-import { listTable, previewTable, delTable, genCode, synchDb } from "@/api/tool/gen"
+import { listTable, previewTable, delTable, genCode, syncDb } from "@/api/tool/gen"
 import importTable from "./importTable"
 import hljs from "highlight.js/lib/core"
 import "highlight.js/styles/github.css"
@@ -234,10 +234,10 @@ function handleGenTable(row) {
 }
 
 /** 同步数据库操作 */
-function handleSynchDb(row) {
+function handleSyncDb(row) {
   const tableName = row.tableName
   proxy.$modal.confirm('确认要强制同步"' + tableName + '"表结构吗？').then(function () {
-    return synchDb(tableName)
+    return syncDb(tableName)
   }).then(() => {
     proxy.$modal.msgSuccess("同步成功")
   }).catch(() => {})
