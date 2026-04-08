@@ -243,7 +243,7 @@
 
 <script setup name="Role">
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
-import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
+import { roleMenuTreeSelect, treeSelect as menuTreeSelect } from "@/api/system/menu"
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -356,28 +356,14 @@ function handleStatusChange(row) {
   })
 }
 
-/** 更多操作 */
-function handleCommand(command, row) {
-  switch (command) {
-    case "handleDataScope":
-      handleDataScope(row)
-      break
-    case "handleAuthUser":
-      handleAuthUser(row)
-      break
-    default:
-      break
-  }
-}
-
 /** 分配用户 */
 function handleAuthUser(row) {
   router.push("/system/role-auth/user/" + row.roleId)
 }
 
 /** 查询菜单树结构 */
-function getMenuTreeselect() {
-  menuTreeselect().then(response => {
+function getMenuTreeSelect() {
+  menuTreeSelect().then(response => {
     menuOptions.value = response.data
   })
 }
@@ -419,7 +405,7 @@ function reset() {
 /** 添加角色 */
 function handleAdd() {
   reset()
-  getMenuTreeselect()
+  getMenuTreeSelect()
   open.value = true
   title.value = "添加角色"
 }
@@ -428,7 +414,7 @@ function handleAdd() {
 function handleUpdate(row) {
   reset()
   const roleId = row.roleId || ids.value
-  const roleMenu = getRoleMenuTreeselect(roleId)
+  const roleMenu = getRoleMenuTreeSelect(roleId)
   getRole(roleId).then(response => {
     form.value = response.data
     form.value.roleSort = Number(form.value.roleSort)
@@ -448,8 +434,8 @@ function handleUpdate(row) {
 }
 
 /** 根据角色ID查询菜单树结构 */
-function getRoleMenuTreeselect(roleId) {
-  return roleMenuTreeselect(roleId).then(response => {
+function getRoleMenuTreeSelect(roleId) {
+  return roleMenuTreeSelect(roleId).then(response => {
     menuOptions.value = response.menus
     return response
   })
