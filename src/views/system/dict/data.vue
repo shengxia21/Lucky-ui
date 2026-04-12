@@ -177,7 +177,7 @@
 
 <script setup name="Data">
 import useDictStore from '@/store/modules/dict'
-import { optionselect as getDictOptionselect, getType } from "@/api/system/dict/type"
+import { optionSelect as getDictOptionSelect, getType } from "@/api/system/dict/type"
 import { listData, getData, delData, addData, updateData } from "@/api/system/dict/data"
 
 const { proxy } = getCurrentInstance()
@@ -234,7 +234,7 @@ function getTypes(dictId) {
 
 /** 查询字典类型列表 */
 function getTypeList() {
-  getDictOptionselect().then(response => {
+  getDictOptionSelect().then(response => {
     typeOptions.value = response.data
   })
 }
