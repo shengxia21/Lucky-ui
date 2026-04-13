@@ -130,7 +130,7 @@
 
 <script setup name="ImageManager">
 import { listImage, updateImage, delImage } from "@/api/ai/console/image"
-import { optionselect as getUserOptionselect } from "@/api/system/user"
+import { optionSelect as getUserOptionSelect } from "@/api/system/user"
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
@@ -209,7 +209,7 @@ function handleUpdatePublicStatusChange(row) {
 
 /** 获取用户选择框列表 */
 function getUserList() {
-  getUserOptionselect().then(response => {
+  getUserOptionSelect().then(response => {
     userList.value = response.data
   })
 }

@@ -80,7 +80,7 @@
 
 <script setup>
 import { listConversation, delConversation } from "@/api/ai/console/chat/conversation"
-import { optionselect as getUserOptionselect } from "@/api/system/user"
+import { optionSelect as getUserOptionSelect } from "@/api/system/user"
 
 const { proxy } = getCurrentInstance()
 
@@ -138,7 +138,7 @@ function handleDelete(row) {
 
 /** 获取用户选择框列表 */
 function getUserList() {
-  getUserOptionselect().then(response => {
+  getUserOptionSelect().then(response => {
     userList.value = response.data
   })
 }
