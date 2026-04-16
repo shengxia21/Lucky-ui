@@ -1,9 +1,9 @@
 <h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">Lucky-ui</h1>
 <h4 align="center">基于SpringBoot+Spring AI的一站式AI应用开发框架</h4>
 <p align="center">
-	<a href="https://gitee.com/fushengxuyu/lucky-vue/stargazers"><img src="https://gitee.com/fushengxuyu/lucky-vue/badge/star.svg?theme=dark"></a>
-	<a href="https://gitee.com/fushengxuyu/lucky-vue"><img src="https://img.shields.io/badge/lucky-v1.0.0-brightgreen.svg"></a>
-	<a href="https://gitee.com/fushengxuyu/lucky-vue/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
+	<a href="https://gitee.com/fushengxuyu/lucky-ui/stargazers"><img src="https://gitee.com/fushengxuyu/lucky-ui/badge/star.svg?theme=dark"></a>
+	<a href="https://gitee.com/fushengxuyu/lucky-ui"><img src="https://img.shields.io/badge/lucky-v1.0.0-brightgreen.svg"></a>
+	<a href="https://gitee.com/fushengxuyu/lucky-ui/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg"></a>
 </p>
 
 ## 🚀 快速体验
@@ -13,7 +13,7 @@
 |   平台   | 地址  | 账号 |
 |:------:|------------------------------------------------|---|
 |  用户端   | 待实现  | admin / admin123 |
-| 管理后台 | [www.lucky.com](http://121.40.230.117/login) | admin / admin123 |
+| 管理后台 | 经费不足 | admin / admin123 |
 
 ### 项目源码
 
