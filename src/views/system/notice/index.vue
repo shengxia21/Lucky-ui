@@ -94,6 +94,7 @@
          </el-table-column>
          <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
             <template #default="scope">
+               <el-button link type="primary" icon="User" @click="handleReadUsers(scope.row)" v-hasPermi="['system:notice:list']">阅读用户</el-button>
                <el-button link type="primary" icon="Edit" @click="handleUpdate(scope.row)" v-hasPermi="['system:notice:edit']">修改</el-button>
                <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:notice:remove']" >删除</el-button>
             </template>
@@ -157,11 +158,14 @@
 
       <!-- 公告详情对话框 -->
       <notice-detail-view ref="noticeViewRef" />
+      <!-- 公告已读用户列表对话框 -->
+      <read-users-dialog ref="readUsersRef" />
    </div>
 </template>
 
 <script setup name="Notice">
 import NoticeDetailView from "@/layout/components/HeaderNotice/DetailView"
+import ReadUsersDialog from "./ReadUsers"
 import { listNotice, getNotice, delNotice, addNotice, updateNotice } from "@/api/system/notice"
 
 const { proxy } = getCurrentInstance()
@@ -264,13 +268,13 @@ function submitForm() {
   proxy.$refs["noticeRef"].validate(valid => {
     if (valid) {
       if (form.value.noticeId != undefined) {
-        updateNotice(form.value).then(response => {
+        updateNotice(form.value).then(() => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()
         })
       } else {
-        addNotice(form.value).then(response => {
+        addNotice(form.value).then(() => {
           proxy.$modal.msgSuccess("新增成功")
           open.value = false
           getList()
@@ -283,6 +287,11 @@ function submitForm() {
 /** 查看公告详情 */
 function handleViewData(row) {
   proxy.$refs["noticeViewRef"].open(row)
+}
+
+/** 查看已读用户 */
+function handleReadUsers(row) {
+   proxy.$refs["readUsersRef"].open(row)
 }
 
 /** 删除按钮操作 */
