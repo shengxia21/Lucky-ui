@@ -87,7 +87,7 @@ import { listMessage, delMessage } from "@/api/ai/console/chat/message"
 import { optionSelect as getUserOptionSelect } from "@/api/system/user"
 
 const { proxy } = getCurrentInstance()
-const { boolean_string } = proxy.useDict('boolean_string')
+const { boolean_string } = useDict('boolean_string')
 
 const messageList = ref([])
 const loading = ref(true)

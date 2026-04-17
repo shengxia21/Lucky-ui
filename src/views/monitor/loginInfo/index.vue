@@ -128,7 +128,7 @@
 import { list, delLoginInfo, cleanLoginInfo, unlockLoginInfo } from "@/api/monitor/LoginInfo"
 
 const { proxy } = getCurrentInstance()
-const { sys_common_status } = proxy.useDict("sys_common_status")
+const { sys_common_status } = useDict("sys_common_status")
 
 const LoginInfoList = ref([])
 const loading = ref(true)

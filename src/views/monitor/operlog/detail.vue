@@ -129,7 +129,7 @@ const dialogVisible = computed({
 })
 
  
-const { sys_oper_type } = proxy.useDict('sys_oper_type')
+const { sys_oper_type } = useDict('sys_oper_type')
 
 const form = computed(() => props.row || {})
 const typeLabel = computed(() => proxy.selectDictLabel(sys_oper_type.value, form.value.businessType) || '-')

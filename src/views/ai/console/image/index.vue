@@ -134,7 +134,7 @@ import { optionSelect as getUserOptionSelect } from "@/api/system/user"
 import { AiImageStatusEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
-const { ai_image_status, ai_platform, boolean_string } = proxy.useDict('ai_image_status', 'ai_platform', 'boolean_string')
+const { ai_image_status, ai_platform, boolean_string } = useDict('ai_image_status', 'ai_platform', 'boolean_string')
 
 const imageList = ref([])
 const loading = ref(true)

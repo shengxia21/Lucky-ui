@@ -185,7 +185,7 @@ import { getApiKeySimpleList } from "@/api/ai/console/apiKey"
 import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
-const { ai_model_type, ai_platform, sys_normal_disable } = proxy.useDict('ai_model_type', 'ai_platform', 'sys_normal_disable')
+const { ai_model_type, ai_platform, sys_normal_disable } = useDict('ai_model_type', 'ai_platform', 'sys_normal_disable')
 
 const modelList = ref([])
 const open = ref(false)

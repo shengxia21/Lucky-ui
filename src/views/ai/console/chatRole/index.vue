@@ -106,7 +106,7 @@ import { listRole, delRole } from "@/api/ai/console/chatRole"
 import ChatRoleForm from './ChatRoleForm.vue'
 
 const { proxy } = getCurrentInstance()
-const { boolean_string, sys_normal_disable } = proxy.useDict('boolean_string', 'sys_normal_disable')
+const { boolean_string, sys_normal_disable } = useDict('boolean_string', 'sys_normal_disable')
 
 const roleList = ref([])
 const loading = ref(true)

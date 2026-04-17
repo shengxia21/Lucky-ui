@@ -91,7 +91,7 @@ import { getModelSimpleList } from "@/api/ai/console/model"
 import { AiModelTypeEnum } from '@/utils/constants/aiConstant'
 
 const { proxy } = getCurrentInstance()
-const { boolean_string, sys_normal_disable, ai_mcp_client_name } = proxy.useDict('boolean_string', 'sys_normal_disable', 'ai_mcp_client_name')
+const { boolean_string, sys_normal_disable, ai_mcp_client_name } = useDict('boolean_string', 'sys_normal_disable', 'ai_mcp_client_name')
 
 const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
 

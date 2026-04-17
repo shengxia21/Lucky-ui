@@ -157,7 +157,7 @@ import OperLogDetail from './detail'
 import { list, delOperLog, cleanOperLog } from "@/api/monitor/operLog"
 
 const { proxy } = getCurrentInstance()
-const { sys_oper_type, sys_common_status } = proxy.useDict("sys_oper_type", "sys_common_status")
+const { sys_oper_type, sys_common_status } = useDict("sys_oper_type", "sys_common_status")
 
 const operLogList = ref([])
 const detailVisible = ref(false)

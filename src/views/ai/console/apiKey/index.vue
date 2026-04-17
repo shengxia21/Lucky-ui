@@ -124,7 +124,7 @@
 import { listKey, getKey, delKey, addKey, updateKey } from "@/api/ai/console/apiKey"
 
 const { proxy } = getCurrentInstance()
-const { ai_platform, sys_normal_disable } = proxy.useDict('ai_platform', 'sys_normal_disable')
+const { ai_platform, sys_normal_disable } = useDict('ai_platform', 'sys_normal_disable')
 
 const keyList = ref([])
 const open = ref(false)
